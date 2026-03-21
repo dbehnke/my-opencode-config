@@ -38,5 +38,9 @@ rust-testing
 security-review
 documentation-lookup
 
+# DevOps & Deployment
+docker-patterns
+deployment-patterns
+
 # Research Workflow
 search-first

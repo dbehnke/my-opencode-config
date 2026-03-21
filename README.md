@@ -197,6 +197,10 @@ Rust:
 - `documentation-lookup` - API reference research
 - `search-first` - Research-before-coding methodology
 
+**DevOps & Deployment:**
+- `docker-patterns` - Docker and Docker Compose patterns, container security
+- `deployment-patterns` - CI/CD workflows, deployment strategies, health checks
+
 ### Skill Selection Guide
 
 | Task Type | Use This | Reason |
@@ -207,6 +211,8 @@ Rust:
 | Go idioms | ECC `golang-patterns` | Language-specific |
 | Security audit | ECC `security-review` | Fills superpowers gap |
 | API design | ECC `api-design` | Domain-specific knowledge |
+| Docker/Containers | ECC `docker-patterns` | Container best practices |
+| CI/CD Deployment | ECC `deployment-patterns` | Deployment strategies |
 
 ### Usage Examples
 
@@ -214,6 +220,8 @@ Rust:
 "Use golang-patterns to refactor this handler"
 "Apply security-review to the authentication module"
 "Use api-design principles for this endpoint"
+"Use docker-patterns to containerize this application"
+"Apply deployment-patterns for CI/CD setup"
 ```
 
 ### Upgrading
@@ -227,6 +235,50 @@ Upgrade automatically:
 ```bash
 ./scripts/upgrade-ecc.sh --auto
 ```
+
+### Finding and Installing Additional ECC Skills
+
+The default installation includes a curated selection of skills. To find and install additional skills from the ECC repository:
+
+**Step 1: Browse Available Skills**
+Visit the [ECC skills directory](https://github.com/affaan-m/everything-claude-code/tree/main/skills) to see all available skills.
+
+Popular skills not included by default:
+- `docker-patterns` - Docker and Docker Compose patterns
+- `deployment-patterns` - CI/CD and deployment workflows
+- `continuous-learning` - Pattern extraction from sessions (requires ECC memory system)
+- `eval-harness` - Verification loop evaluation
+- `autonomous-loops` - Autonomous agent patterns
+
+**Step 2: Edit the Skills List**
+Add the skill name to `ecc-config/skills-list.txt`:
+```bash
+# Open the skills list
+nano ecc-config/skills-list.txt
+
+# Add your desired skill(s)
+docker-patterns
+deployment-patterns
+```
+
+**Step 3: Re-run the Installer**
+```bash
+./install-ecc-skills.sh
+```
+
+The installer will:
+- Check for new skills in your list
+- Copy them to `~/.config/opencode/ecc-skills/`
+- Update `opencode.json` automatically
+- Create backups of existing files
+
+**Step 4: Verify Installation**
+Test the new skill:
+```
+"Use docker-patterns to containerize this application"
+```
+
+**Note:** Skills marked as "requires ECC memory system" (like `continuous-learning`) should NOT be installed if you're using context-mode for session management, as they may conflict.
 
 ---
 
