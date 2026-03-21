@@ -21,6 +21,25 @@ cd ~/src/my-opencode-config
 ./install-ecc-skills.sh
 ```
 
+## Prerequisites
+
+Before installing, ensure you have:
+
+- **Node.js LTS** (v24 as of this writing) - Required for context-mode
+  - Download: https://nodejs.org/ (LTS version)
+  - Verify: `node --version` should show v24.x.x or higher
+
+- **Git** - For cloning repositories
+  - Verify: `git --version`
+
+- **OpenCode** - Latest stable release
+  - Download: https://opencode.ai
+  - Verify: `opencode --version`
+
+- **(Optional) Bun** - For faster context-mode execution
+  - Automatically detected if installed
+  - Falls back to Node.js if not available
+
 ## Installation Order
 
 **Install in this sequence to avoid conflicts:**
@@ -335,6 +354,57 @@ Test ECC skills:
 ```
 "Use golang-patterns to review this code"
 ```
+
+---
+
+## Enhancing an Existing AGENTS.md
+
+Already have an AGENTS.md? Enhance it with context-mode routing rules and skill references.
+
+### Option 1: Automated Enhancement (Prompt)
+
+**Safe to run multiple times** - The prompt will check for existing sections and only add what's missing.
+
+```
+Enhance the existing AGENTS.md in this repository with context-mode routing rules and skill references from https://github.com/dbehnke/my-opencode-config. First, read the current AGENTS.md to understand its structure. Then fetch the reference AGENTS.md from https://raw.githubusercontent.com/dbehnke/my-opencode-config/main/AGENTS.md. Add Section 1 (Context-Mode Routing Rules), Section 2 (Superpowers Skills), Section 3 (ECC Skills), and Section 4 (Skill Selection Guide) if they don't already exist. Preserve existing project-specific content. Save the enhanced file and report which sections were added.
+```
+
+### Option 2: Manual Enhancement
+
+**Step 1:** Review your current AGENTS.md
+```bash
+cat AGENTS.md
+```
+
+**Step 2:** Copy sections from reference
+Visit https://github.com/dbehnke/my-opencode-config/blob/main/AGENTS.md and copy:
+- Section 1: Context-Mode Routing Rules
+- Section 2: Superpowers Skills
+- Section 3: ECC Skills
+- Section 4: Skill Selection Guide
+
+**Step 3:** Add to your AGENTS.md
+```markdown
+# AGENTS.md
+
+[Your existing content...]
+
+## Context-Mode Routing Rules
+[Paste Section 1]
+
+## Superpowers Skills
+[Paste Section 2]
+
+## ECC Skills
+[Paste Section 3]
+
+## Skill Selection Guide
+[Paste Section 4]
+
+[Your existing content continues...]
+```
+
+**Note:** The integration script skips sections that already exist, so manual merging gives you full control over placement and customization.
 
 ---
 
