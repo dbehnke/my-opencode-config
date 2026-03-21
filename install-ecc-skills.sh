@@ -62,6 +62,20 @@ check_prerequisites() {
         exit 1
     fi
     
+    # Check if we can write to install directory
+    if [ ! -d "$HOME/.config/opencode" ]; then
+        log_info "Creating ~/.config/opencode directory..."
+        mkdir -p "$HOME/.config/opencode" || {
+            log_error "Cannot create ~/.config/opencode - check permissions"
+            exit 1
+        }
+    fi
+    
+    if [ ! -w "$HOME/.config/opencode" ]; then
+        log_error "Cannot write to ~/.config/opencode - check permissions"
+        exit 1
+    fi
+    
     if [ ! -f "$SKILLS_FILE" ]; then
         log_error "Skills file not found: $SKILLS_FILE"
         log_info "Creating default skills file..."

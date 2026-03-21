@@ -40,9 +40,14 @@ get_installed_version() {
 # Get latest version from GitHub
 get_latest_version() {
     local api_url="https://api.github.com/repos/${ECC_REPO}/releases/latest"
+    local version=""
     
-    # Try to get version from GitHub API
-    local version=$(curl -s "$api_url" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    # Try to get version from GitHub API with timeout
+    if command -v curl &> /dev/null; then
+        version=$(curl -s --max-time 10 "$api_url" 2>/dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    elif command -v wget &> /dev/null; then
+        version=$(wget -qO- --timeout=10 "$api_url" 2>/dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    fi
     
     if [ -z "$version" ] || [ "$version" = "null" ]; then
         # Fallback: try to get from git ls-remote
@@ -63,13 +68,21 @@ compare_versions() {
         return 0
     fi
     
-    # Use sort -V for version comparison
-    local lowest=$(printf '%s\n%s\n' "$v1" "$v2" | sort -V | head -n1)
-    
-    if [ "$lowest" = "$v1" ]; then
-        return 2  # v1 < v2
+    # Use sort -V if available, otherwise use simple string comparison
+    if printf '%s\n' "$v1" "$v2" | sort -V > /dev/null 2>&1; then
+        local lowest=$(printf '%s\n%s\n' "$v1" "$v2" | sort -V | head -n1)
+        if [ "$lowest" = "$v1" ]; then
+            return 2  # v1 < v2
+        else
+            return 1  # v1 > v2
+        fi
     else
-        return 1  # v1 > v2
+        # Fallback: simple string comparison (works for most cases)
+        if [ "$v1" < "$v2" ]; then
+            return 2
+        else
+            return 1
+        fi
     fi
 }
 

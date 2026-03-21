@@ -44,6 +44,13 @@ update_opencode_json() {
         return 1
     fi
     
+    # Check if python3 is available
+    if ! command -v python3 &> /dev/null; then
+        log_warn "python3 not found. Manual update required."
+        show_manual_update_instructions
+        return 1
+    fi
+    
     backup_file "$OPENCODE_JSON"
     
     # Create temporary file with updated configuration
@@ -52,50 +59,64 @@ update_opencode_json() {
     # Check if instructions array already exists
     if grep -q '"instructions"' "$OPENCODE_JSON"; then
         log_warn "Instructions array already exists in opencode.json"
-        log_info "Please manually add ECC skills to the instructions array"
-        echo ""
-        echo "Add these lines to your instructions array:"
-        echo '"~/.config/opencode/ecc-skills/golang-patterns/SKILL.md",'
-        echo '"~/.config/opencode/ecc-skills/golang-testing/SKILL.md",'
-        echo '"~/.config/opencode/ecc-skills/frontend-patterns/SKILL.md",'
-        echo '"~/.config/opencode/ecc-skills/python-patterns/SKILL.md",'
-        echo '"~/.config/opencode/ecc-skills/python-testing/SKILL.md",'
-        echo '"~/.config/opencode/ecc-skills/rust-patterns/SKILL.md",'
-        echo '"~/.config/opencode/ecc-skills/security-review/SKILL.md",'
-        echo '"~/.config/opencode/ecc-skills/documentation-lookup/SKILL.md",'
+        show_manual_update_instructions
     else
         # Add instructions array before the closing brace
-        python3 << 'EOF' - "$OPENCODE_JSON" "$temp_file"
+        if ! python3 << 'EOF' - "$OPENCODE_JSON" "$temp_file"
 import json
 import sys
 
-with open(sys.argv[1], 'r') as f:
-    config = json.load(f)
+try:
+    with open(sys.argv[1], 'r') as f:
+        config = json.load(f)
 
-# Add instructions array with ECC skills
-config['instructions'] = [
-    "~/.config/opencode/ecc-skills/golang-patterns/SKILL.md",
-    "~/.config/opencode/ecc-skills/golang-testing/SKILL.md",
-    "~/.config/opencode/ecc-skills/frontend-patterns/SKILL.md",
-    "~/.config/opencode/ecc-skills/backend-patterns/SKILL.md",
-    "~/.config/opencode/ecc-skills/api-design/SKILL.md",
-    "~/.config/opencode/ecc-skills/python-patterns/SKILL.md",
-    "~/.config/opencode/ecc-skills/python-testing/SKILL.md",
-    "~/.config/opencode/ecc-skills/rust-patterns/SKILL.md",
-    "~/.config/opencode/ecc-skills/security-review/SKILL.md",
-    "~/.config/opencode/ecc-skills/documentation-lookup/SKILL.md",
-    "~/.config/opencode/ecc-skills/search-first/SKILL.md"
-]
+    # Add instructions array with ECC skills
+    config['instructions'] = [
+        "~/.config/opencode/ecc-skills/golang-patterns/SKILL.md",
+        "~/.config/opencode/ecc-skills/golang-testing/SKILL.md",
+        "~/.config/opencode/ecc-skills/frontend-patterns/SKILL.md",
+        "~/.config/opencode/ecc-skills/backend-patterns/SKILL.md",
+        "~/.config/opencode/ecc-skills/api-design/SKILL.md",
+        "~/.config/opencode/ecc-skills/python-patterns/SKILL.md",
+        "~/.config/opencode/ecc-skills/python-testing/SKILL.md",
+        "~/.config/opencode/ecc-skills/rust-patterns/SKILL.md",
+        "~/.config/opencode/ecc-skills/security-review/SKILL.md",
+        "~/.config/opencode/ecc-skills/documentation-lookup/SKILL.md",
+        "~/.config/opencode/ecc-skills/search-first/SKILL.md"
+    ]
 
-with open(sys.argv[2], 'w') as f:
-    json.dump(config, f, indent=2)
+    with open(sys.argv[2], 'w') as f:
+        json.dump(config, f, indent=2)
 
-print("Added instructions array with ECC skills")
+    print("Added instructions array with ECC skills")
+except Exception as e:
+    print(f"Error: {e}", file=sys.stderr)
+    sys.exit(1)
 EOF
+        then
+            log_error "Failed to update opencode.json with Python"
+            show_manual_update_instructions
+            return 1
+        fi
         
         mv "$temp_file" "$OPENCODE_JSON"
         log_success "Updated opencode.json with ECC skills"
     fi
+}
+
+# Show manual update instructions
+show_manual_update_instructions() {
+    log_info "Please manually add ECC skills to the instructions array"
+    echo ""
+    echo "Add these lines to your instructions array in $OPENCODE_JSON:"
+    echo '"~/.config/opencode/ecc-skills/golang-patterns/SKILL.md",'
+    echo '"~/.config/opencode/ecc-skills/golang-testing/SKILL.md",'
+    echo '"~/.config/opencode/ecc-skills/frontend-patterns/SKILL.md",'
+    echo '"~/.config/opencode/ecc-skills/python-patterns/SKILL.md",'
+    echo '"~/.config/opencode/ecc-skills/python-testing/SKILL.md",'
+    echo '"~/.config/opencode/ecc-skills/rust-patterns/SKILL.md",'
+    echo '"~/.config/opencode/ecc-skills/security-review/SKILL.md",'
+    echo '"~/.config/opencode/ecc-skills/documentation-lookup/SKILL.md",'
 }
 
 # Update AGENTS.md
