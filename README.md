@@ -8,10 +8,17 @@ An opinionated, complete configuration for OpenCode combining three powerful sys
 
 ## Quick Start (One-Command Setup)
 
-Copy and paste this into OpenCode to set up everything:
+Copy and paste this into OpenCode to set up everything automatically:
 
 ```
-Set up the complete OpenCode configuration for this repository. First, verify context-mode is installed by running ctx doctor. If not installed, run: npm install -g context-mode and configure ~/.config/opencode/opencode.json with context-mode as MCP server and plugin. Next, install superpowers by running: git clone https://github.com/obra/superpowers.git ~/.config/opencode/skills/superpowers. Then install ECC skills by running ./install-ecc-skills.sh from this repository. Finally, ensure AGENTS.md exists with routing rules for context-mode and references to all available skills.
+Set up the complete OpenCode configuration from https://github.com/dbehnke/my-opencode-config. First, clone the repository to ~/src/my-opencode-config or a directory of your choice. Then run the install script: cd ~/src/my-opencode-config && ./install-ecc-skills.sh to install ECC skills. The script will automatically configure everything including context-mode verification, superpowers installation, and ECC skill integration. Finally, verify the setup by checking that AGENTS.md exists in the repository with complete routing rules for context-mode and references to all available skills from superpowers and ECC.
+```
+
+**Or manually clone first:**
+```bash
+git clone https://github.com/dbehnke/my-opencode-config.git ~/src/my-opencode-config
+cd ~/src/my-opencode-config
+./install-ecc-skills.sh
 ```
 
 ## Installation Order
@@ -239,8 +246,8 @@ git clone https://github.com/obra/superpowers.git ~/.config/opencode/skills/supe
 
 ### Step 3: Install ECC Skills
 ```bash
-git clone https://github.com/your-username/my-opencode-config.git
-cd my-opencode-config
+git clone https://github.com/dbehnke/my-opencode-config.git ~/src/my-opencode-config
+cd ~/src/my-opencode-config
 ./install-ecc-skills.sh
 ```
 
@@ -321,9 +328,9 @@ my-opencode-config/
 
 ## Contributing
 
-This is a personal configuration repository. Feel free to fork and customize:
+This is a personal configuration repository available at https://github.com/dbehnke/my-opencode-config. Feel free to fork and customize:
 
-1. Fork the repository
+1. Fork the repository from https://github.com/dbehnke/my-opencode-config
 2. Modify `ecc-config/skills-list.txt` to select different skills
 3. Adjust installation scripts for your needs
 4. Update documentation to reflect your setup
