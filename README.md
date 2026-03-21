@@ -1,155 +1,344 @@
 # my-opencode-config
 
-My opinionated configuration for opencode.
+An opinionated, complete configuration for OpenCode combining three powerful systems:
 
-## Context-mode
+1. **Context-mode** - Context window protection and session continuity
+2. **Superpowers** - Development process discipline and workflows
+3. **ECC** - Language-specific patterns and domain knowledge
 
-This configuration uses [context-mode](https://github.com/mksglu/context-mode) to protect your context window by sandboxing tool calls and providing session continuity.
+## Quick Start (One-Command Setup)
 
-### What is Context-mode?
+Copy and paste this into OpenCode to set up everything:
 
-Context-mode is an MCP server that:
-- **Reduces context usage by 98%** by sandboxing large outputs (web pages, logs, API responses)
-- **Maintains session continuity** across conversation compactions via SQLite tracking
-- **Enables FTS5 search** with BM25 ranking for indexed content
+```
+Set up the complete OpenCode configuration for this repository. First, verify context-mode is installed by running ctx doctor. If not installed, run: npm install -g context-mode and configure ~/.config/opencode/opencode.json with context-mode as MCP server and plugin. Next, install superpowers by running: git clone https://github.com/obra/superpowers.git ~/.config/opencode/skills/superpowers. Then install ECC skills by running ./install-ecc-skills.sh from this repository. Finally, ensure AGENTS.md exists with routing rules for context-mode and references to all available skills.
+```
 
-### Quick Install (Global Setup)
+## Installation Order
 
-Copy and paste this into your opencode session to install context-mode globally:
+**Install in this sequence to avoid conflicts:**
 
+1. **Context-mode** (Foundation) - Context protection and session management
+2. **Superpowers** (Process) - Development workflows and discipline
+3. **ECC** (Domain Knowledge) - Language patterns and specialized skills
+
+---
+
+## 1. Context-mode
+
+Context-mode protects your context window by sandboxing large outputs (logs, API responses, web pages) and maintaining session continuity across conversation compactions.
+
+### What It Does
+- **98% context reduction** via sandboxing
+- **Session continuity** with SQLite-based tracking
+- **FTS5 search** with BM25 ranking
+- **MCP protocol layer** - works below the agent level
+
+### Installation
+
+**Option 1: Quick Install (Prompt)**
 ```
 Install context-mode globally for opencode: npm install -g context-mode, then add it to ~/.config/opencode/opencode.json as an MCP server with command ["context-mode"] and enabled true, and add "context-mode" to the plugin array. Verify with ctx doctor.
 ```
 
-### Full Setup (Global + Repository)
-
-For a complete setup that installs context-mode globally AND configures it for the current repository:
-
-```
-Install context-mode globally and set it up for this repository. First, run npm install -g context-mode. Then update ~/.config/opencode/opencode.json to add context-mode as an MCP server with enabled true and add "context-mode" to the plugin array. Next, check if AGENTS.md exists in this repo - if not, run /init to create it. Finally, add context-mode routing rules to AGENTS.md instructing agents to use ctx_batch_execute, ctx_fetch_and_index, ctx_execute_file, and ctx_search instead of raw Bash/Read/WebFetch/curl. Include blocked commands and tool hierarchy. Verify the setup works.
+**Option 2: Manual**
+```bash
+npm install -g context-mode
 ```
 
-### Manual Install
+Then add to `~/.config/opencode/opencode.json`:
+```json
+{
+  "mcp": {
+    "context-mode": {
+      "type": "local",
+      "command": ["context-mode"],
+      "enabled": true
+    }
+  },
+  "plugin": ["context-mode"]
+}
+```
 
-1. **Install context-mode globally:**
-   ```bash
-   npm install -g context-mode
-   ```
-
-2. **Edit `~/.config/opencode/opencode.json`:**
-   ```json
-   {
-     "$schema": "https://opencode.ai/config.json",
-     "mcp": {
-       "context-mode": {
-         "type": "local",
-         "command": ["context-mode"],
-         "enabled": true
-       }
-     },
-     "plugin": ["context-mode"]
-   }
-   ```
-
-3. **Restart OpenCode** for changes to take effect.
-
-4. **Verify installation:**
-   ```bash
-   ctx doctor
-   ctx stats
-   ```
+**Verify:**
+```bash
+ctx doctor
+ctx stats
+```
 
 ### Available Tools
 
-Once installed, you can use these sandbox tools in any opencode session:
-
 - `ctx_batch_execute` - Run multiple commands + search in one call
-- `ctx_execute` - Run code in 11 languages (only stdout enters context)
-- `ctx_execute_file` - Process files without loading content into context
-- `ctx_index` - Index markdown into FTS5 with BM25 ranking
+- `ctx_execute` - Sandbox code execution (11 languages)
+- `ctx_fetch_and_index` - Fetch URLs and index for search
 - `ctx_search` - Query indexed content
-- `ctx_fetch_and_index` - Fetch URLs, convert to markdown, and index
-- `ctx_stats` - Show context savings and session statistics
-- `ctx_doctor` - Diagnose installation and runtimes
-- `ctx_upgrade` - Upgrade to latest version
 
-### Current Configuration
+See [context-mode documentation](https://github.com/mksglu/context-mode) for details.
 
-Our setup uses:
-- **Bun runtime** for 3-5x faster JS/TS execution
-- **8/11 language runtimes** available (javascript, shell, typescript, python, ruby, go, rust, perl)
-- **SQLite FTS5** for full-text search with BM25 ranking
+---
 
-See the [context-mode documentation](https://github.com/mksglu/context-mode) for advanced usage and platform-specific configurations.
+## 2. Superpowers
 
-### Setting Up Context-mode for Your Repository
+[Superpowers](https://github.com/obra/superpowers) by Jesse Vincent is a complete software development workflow providing process discipline through 15 composable skills.
 
-To ensure AI agents working on **your projects** use context-mode effectively, add an `AGENTS.md` file to your repository root. This file instructs agents to route large outputs through context-mode's sandbox tools instead of dumping raw data into the context window.
+### What It Does
+- **Automatic skill triggering** - Skills activate based on context
+- **Development workflow** - From brainstorming to completion
+- **Rigorous discipline** - TDD, verification, code review enforcement
+- **Subagent orchestration** - Parallel agent workflows
 
-#### Option 1: Automated Setup (Prompt)
+### Installation
 
-Copy and paste this prompt into your opencode session to automatically set up context-mode for this repository:
-
+**Option 1: Quick Install (Prompt)**
 ```
-Set up context-mode for this repository. First, check if AGENTS.md exists. If it doesn't exist, run /init and select AGENTS.md to create it. Then read the AGENTS.md file and add context-mode routing rules to it. The rules should instruct AI agents to use ctx_batch_execute for multiple commands, ctx_fetch_and_index for web requests, ctx_execute_file for file analysis, and ctx_search for indexed content. Include a tool hierarchy section and blocked commands (curl, wget, direct HTTP). Save the updated file and verify the routing rules are present.
+Fetch and follow instructions from https://raw.githubusercontent.com/obra/superpowers/refs/heads/main/.opencode/INSTALL.md
 ```
 
-This prompt will:
-- Check for existing AGENTS.md or create one via /init
-- Add the complete context-mode routing rules
-- Ensure agents use sandbox tools instead of raw Bash/Read/WebFetch
-
-#### Option 2: Manual Creation
-
-**Create `AGENTS.md` in your project root:**
-
-```markdown
-# AGENTS.md
-
-## Context-mode Routing Rules
-
-You have context-mode MCP tools available. Follow these rules to protect the context window:
-
-### BLOCKED Commands
-
-- **curl / wget**: Use `ctx_fetch_and_index(url, source)` instead
-- **Inline HTTP** (fetch, requests.get, etc.): Use `ctx_execute(language, code)` instead
-- **Direct web fetching**: Use `ctx_fetch_and_index` + `ctx_search`
-
-### REDIRECTED Tools
-
-- **Shell (>20 lines)**: Use `ctx_batch_execute` or `ctx_execute`
-- **File analysis** (not editing): Use `ctx_execute_file(path, language, code)`
-- **grep / search** (large results): Use `ctx_execute` in sandbox
-
-### Tool Selection Hierarchy
-
-1. **GATHER**: `ctx_batch_execute(commands, queries)` — Primary for multiple operations
-2. **FOLLOW-UP**: `ctx_search(queries)` — Query already-indexed content
-3. **PROCESSING**: `ctx_execute` or `ctx_execute_file` — Sandbox execution
-4. **WEB**: `ctx_fetch_and_index` then `ctx_search` — Web content
-5. **INDEX**: `ctx_index(content, source)` — Store for later search
-
-### Output Constraints
-
-- Keep responses under 500 words
-- Write artifacts to FILES, not inline text
-- Use descriptive source labels when indexing
+**Option 2: Manual**
+```bash
+git clone https://github.com/obra/superpowers.git ~/.config/opencode/skills/superpowers
 ```
 
-**Verify it's working:**
+### Available Skills
 
-When an agent starts working in your repo, they should automatically:
-- Use `ctx_batch_execute` instead of multiple Bash calls
-- Fetch web pages via `ctx_fetch_and_index` instead of curl
-- Process log files via `ctx_execute_file` instead of Read
+**Development Process:**
+- `brainstorming` - Socratic design refinement (auto-triggers before coding)
+- `writing-plans` - Detailed implementation planning
+- `executing-plans` - Batch execution with checkpoints
+- `subagent-driven-development` - Parallel agent workflows
+- `using-git-worktrees` - Isolated feature branches
 
-**Customize for your project:**
+**Quality Assurance:**
+- `test-driven-development` - RED-GREEN-REFACTOR cycle
+- `systematic-debugging` - 4-phase root cause analysis
+- `verification-before-completion` - Ensure it's actually fixed
 
-Add project-specific sections to your `AGENTS.md`:
-- Build/test commands
-- Code style guidelines
-- Architecture patterns
-- MCP tool preferences
+**Code Review:**
+- `requesting-code-review` - Pre-review quality checks
+- `receiving-code-review` - Process feedback rigorously
 
-See our [`AGENTS.md`](./AGENTS.md) for a full example with context-mode routing rules.
+**Meta:**
+- `writing-skills` - Create custom skills
+- `using-superpowers` - Entry point documentation
+
+### Basic Workflow
+
+1. **brainstorming** → Refines rough ideas through questions
+2. **using-git-worktrees** → Creates isolated workspace
+3. **writing-plans** → Breaks work into 2-5 minute tasks
+4. **test-driven-development** → RED-GREEN-REFACTOR cycle
+5. **requesting-code-review** → Quality checks between tasks
+6. **finishing-a-development-branch** → Merge/PR decision
+
+See [Superpowers repository](https://github.com/obra/superpowers) for full documentation.
+
+---
+
+## 3. ECC Skills
+
+Selected skills from [everything-claude-code](https://github.com/affaan-m/everything-claude-code) providing language-specific patterns and filling gaps in superpowers.
+
+### What It Does
+- **Language patterns** - Go, TypeScript, Python, Rust idioms
+- **Security auditing** - Comprehensive security review
+- **Documentation lookup** - API reference research
+- **No memory hooks** - Avoids conflicts with context-mode
+
+### Installation
+
+**Prerequisites:** Context-mode and superpowers must be installed first.
+
+**Quick Install:**
+```bash
+./install-ecc-skills.sh
+```
+
+**With specific version:**
+```bash
+./install-ecc-skills.sh v1.9.1
+```
+
+**Integration (automatic):**
+The install script automatically updates:
+- `~/.config/opencode/opencode.json` - Adds skill references
+- `AGENTS.md` - Adds skill documentation
+
+### Available Skills
+
+**Language Patterns:**
+
+Go:
+- `golang-patterns` - Idiomatic Go patterns, concurrency, error handling
+- `golang-testing` - Go testing patterns, TDD, benchmarks
+
+TypeScript/JavaScript:
+- `frontend-patterns` - React, Next.js patterns
+- `backend-patterns` - API, database, caching patterns
+- `api-design` - REST API design, pagination, error responses
+- `e2e-testing` - Playwright E2E patterns
+
+Python:
+- `python-patterns` - Pythonic idioms, PEP 8, type hints
+- `python-testing` - Python testing with pytest
+
+Rust:
+- `rust-patterns` - Idiomatic Rust patterns, ownership, error handling
+- `rust-testing` - Rust testing patterns
+
+**Security & Documentation:**
+- `security-review` - Security audit checklist and patterns
+- `documentation-lookup` - API reference research
+- `search-first` - Research-before-coding methodology
+
+### Skill Selection Guide
+
+| Task Type | Use This | Reason |
+|-----------|----------|--------|
+| TDD workflow | Superpowers `test-driven-development` | More rigorous enforcement |
+| Verification | Superpowers `verification-before-completion` | Better checkpoints |
+| Code review process | Superpowers `requesting-code-review` | Process-focused |
+| Go idioms | ECC `golang-patterns` | Language-specific |
+| Security audit | ECC `security-review` | Fills superpowers gap |
+| API design | ECC `api-design` | Domain-specific knowledge |
+
+### Usage Examples
+
+```
+"Use golang-patterns to refactor this handler"
+"Apply security-review to the authentication module"
+"Use api-design principles for this endpoint"
+```
+
+### Upgrading
+
+Check for updates:
+```bash
+./scripts/upgrade-ecc.sh
+```
+
+Upgrade automatically:
+```bash
+./scripts/upgrade-ecc.sh --auto
+```
+
+---
+
+## Complete Setup Guide
+
+### Step 1: Install Context-mode
+```bash
+npm install -g context-mode
+# Configure opencode.json (see above)
+ctx doctor  # Verify
+```
+
+### Step 2: Install Superpowers
+```bash
+git clone https://github.com/obra/superpowers.git ~/.config/opencode/skills/superpowers
+```
+
+### Step 3: Install ECC Skills
+```bash
+git clone https://github.com/your-username/my-opencode-config.git
+cd my-opencode-config
+./install-ecc-skills.sh
+```
+
+### Step 4: Configure Your Repository
+
+Create or update `AGENTS.md` in your project:
+```bash
+# If AGENTS.md doesn't exist:
+/init
+# Select AGENTS.md
+```
+
+Add context-mode routing rules (see AGENTS.md in this repo for full example).
+
+### Step 5: Restart OpenCode
+```bash
+# Exit and restart OpenCode for changes to take effect
+```
+
+### Step 6: Verify Installation
+
+Test context-mode:
+```
+ctx stats
+```
+
+Test superpowers:
+```
+"Help me plan a new feature"  # Should trigger brainstorming
+```
+
+Test ECC skills:
+```
+"Use golang-patterns to review this code"
+```
+
+---
+
+## Repository Structure
+
+```
+my-opencode-config/
+├── README.md                    # This file
+├── AGENTS.md                    # Agent instructions example
+├── install-ecc-skills.sh        # ECC installer
+├── ecc-config/
+│   └── skills-list.txt         # Skills to install
+└── scripts/
+    ├── integrate-ecc.sh        # Integration helper
+    └── upgrade-ecc.sh          # Version checker
+```
+
+---
+
+## Troubleshooting
+
+### Context-mode not working
+- Verify: `ctx doctor`
+- Check opencode.json has context-mode in mcp and plugin arrays
+- Restart OpenCode
+
+### Superpowers not triggering
+- Verify: `ls ~/.config/opencode/skills/superpowers/skills/`
+- Skills trigger automatically based on context
+- Try: "Let's brainstorm this feature"
+
+### ECC skills not available
+- Check installation: `ls ~/.config/opencode/ecc-skills/`
+- Verify opencode.json has instructions array
+- Check AGENTS.md has ECC section
+
+### Conflicts between systems
+- Ensure installation order: context-mode → superpowers → ECC
+- Don't use ECC memory/hook features (disabled by design)
+- Check AGENTS.md routing rules are clear
+
+---
+
+## Contributing
+
+This is a personal configuration repository. Feel free to fork and customize:
+
+1. Fork the repository
+2. Modify `ecc-config/skills-list.txt` to select different skills
+3. Adjust installation scripts for your needs
+4. Update documentation to reflect your setup
+
+---
+
+## References
+
+- [Context-mode](https://github.com/mksglu/context-mode) - Context window protection
+- [Superpowers](https://github.com/obra/superpowers) - Development workflow
+- [Everything Claude Code](https://github.com/affaan-m/everything-claude-code) - ECC repository
+- [OpenCode Documentation](https://opencode.ai)
+
+---
+
+## License
+
+MIT - Feel free to use and modify for your own setup.

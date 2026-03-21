@@ -1,0 +1,42 @@
+# ECC Skills List for OpenCode
+#
+# These skills fill gaps in superpowers by providing:
+# - Language-specific patterns (Go, TypeScript, Python, Rust)
+# - Security auditing (missing from superpowers)
+# - Documentation lookup (missing from superpowers)
+#
+# NOTE: We intentionally skip skills that overlap with superpowers:
+# - tdd-workflow (use superpowers test-driven-development instead)
+# - verification-loop (use superpowers verification-before-completion)
+# - code-review (use superpowers requesting-code-review)
+#
+# Installation command:
+#   ./install-ecc-skills.sh [version]
+
+# Language-Specific Patterns
+# Go
+golang-patterns
+golang-testing
+
+# TypeScript/JavaScript
+frontend-patterns
+backend-patterns
+bun-runtime
+nextjs-turbopack
+api-design
+e2e-testing
+
+# Python
+python-patterns
+python-testing
+
+# Rust
+rust-patterns
+rust-testing
+
+# Security & Documentation (fills superpowers gaps)
+security-review
+documentation-lookup
+
+# Research Workflow
+search-first
