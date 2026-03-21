@@ -21,6 +21,8 @@ cd ~/src/my-opencode-config
 ./install-ecc-skills.sh
 ```
 
+**New to these tools?** Check out [EXAMPLES.md](./EXAMPLES.md) for practical workflows, beginner tips, and troubleshooting guides.
+
 ## Prerequisites
 
 Before installing, ensure you have:
