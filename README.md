@@ -11,13 +11,19 @@ An opinionated, complete configuration for OpenCode combining three powerful sys
 Copy and paste this into OpenCode to set up everything automatically:
 
 ```
-Set up the complete OpenCode configuration from https://github.com/dbehnke/my-opencode-config. First, clone the repository to ~/src/my-opencode-config or a directory of your choice. Then run the install script: cd ~/src/my-opencode-config && ./install-ecc-skills.sh to install ECC skills. The script will automatically configure everything including context-mode verification, superpowers installation, and ECC skill integration. Finally, verify the setup by checking that AGENTS.md exists in the repository with complete routing rules for context-mode and references to all available skills from superpowers and ECC.
+Set up the complete OpenCode configuration from https://github.com/dbehnke/my-opencode-config. First, clone the repository to a temporary directory like /tmp/my-opencode-config or any directory of your choice. Then run the install script: cd /tmp/my-opencode-config && ./install-ecc-skills.sh to install ECC skills. The script will automatically configure everything including context-mode verification, superpowers installation, and ECC skill integration. Finally, verify the setup by checking that AGENTS.md exists in the repository with complete routing rules for context-mode and references to all available skills from superpowers and ECC.
 ```
 
 **Or manually clone first:**
 ```bash
-git clone https://github.com/dbehnke/my-opencode-config.git ~/src/my-opencode-config
-cd ~/src/my-opencode-config
+# Use a temporary directory (recommended)
+git clone https://github.com/dbehnke/my-opencode-config.git /tmp/my-opencode-config
+cd /tmp/my-opencode-config
+./install-ecc-skills.sh
+
+# Or clone to your preferred location
+git clone https://github.com/dbehnke/my-opencode-config.git ~/my-opencode-config
+cd ~/my-opencode-config
 ./install-ecc-skills.sh
 ```
 
@@ -319,8 +325,14 @@ git clone https://github.com/obra/superpowers.git ~/.config/opencode/skills/supe
 
 ### Step 3: Install ECC Skills
 ```bash
-git clone https://github.com/dbehnke/my-opencode-config.git ~/src/my-opencode-config
-cd ~/src/my-opencode-config
+# Clone to temporary directory (recommended for one-time setup)
+git clone https://github.com/dbehnke/my-opencode-config.git /tmp/my-opencode-config
+cd /tmp/my-opencode-config
+./install-ecc-skills.sh
+
+# Or clone to a location you'll keep for updates
+git clone https://github.com/dbehnke/my-opencode-config.git ~/my-opencode-config
+cd ~/my-opencode-config
 ./install-ecc-skills.sh
 ```
 
