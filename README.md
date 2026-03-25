@@ -240,6 +240,7 @@ Rust:
 | API design | ECC `api-design` | Domain-specific knowledge |
 | Docker/Containers | ECC `docker-patterns` | Container best practices |
 | CI/CD Deployment | ECC `deployment-patterns` | Deployment strategies |
+| Pre-PR code review | `@code-reviewer` + `$pr-gate` | Catches issues locally before Copilot sees them |
 
 ### Usage Examples
 
@@ -306,6 +307,86 @@ Test the new skill:
 ```
 
 **Note:** Skills marked as "requires ECC memory system" (like `continuous-learning`) should NOT be installed if you're using context-mode for session management, as they may conflict.
+
+---
+
+## 4. Code Review Agent
+
+A pre-PR review system that catches issues locally before pushing,
+breaking the endless AI review loop.
+
+### What It Does
+
+- **Hygiene check** — catches accidentally committed cache/build artifacts
+- **Linting** — via Megalinter (80+ linters) or individual tools
+- **Secrets detection** — via Gitleaks
+- **Security rules** — via Semgrep (custom injection, XSS, auth patterns)
+- **AI diff review** — reviews what linters miss for logic, security, async issues
+- Returns structured JSON — only surfaces NEW issues on re-runs
+- Supports JavaScript, TypeScript, Go, Python, Rust, and Shell
+
+### Installation
+
+Included automatically when you run `./install-ecc-skills.sh`
+
+Or install standalone:
+
+```bash
+./install-agents.sh
+```
+
+### Tool Setup (Choose One)
+
+**Option A: Individual Linters (Universal)**
+
+No Docker. Install via your package manager (brew, apt, pacman, etc.)
+or use Nix (see Option C).
+
+```bash
+npm install -g eslint oxlint
+# golangci-lint, ruff, shellcheck, semgrep, gitleaks
+# Use brew (macOS), apt (Debian/Ubuntu), pacman (Arch), etc.
+```
+
+**Option B: Megalinter (Convenience)**
+
+One tool. Docker required (cross-platform: Linux, macOS, Windows).
+
+```bash
+docker pull oxsecurity/megalinter:latest
+# gitleaks: use package manager or Nix
+```
+
+**Option C: Nix (Reproducible)**
+
+For power users. Reproducible environments without Docker.
+
+```bash
+# Install Nix, then add to flake.nix:
+# packages = [ eslint oxlint golangci-lint ruff shellcheck semgrep gitleaks ]
+```
+
+### Usage
+
+```
+run pr-gate
+```
+
+```
+@code-reviewer review the current diff before I push
+```
+
+### How It Breaks the Copilot Loop
+
+Copilot reviews are stateless — every review is a fresh pass that will
+always find something new. This agent front-loads analysis locally:
+
+1. Hygiene check catches cache/build artifacts
+2. Megalinter + Gitleaks catch style/formatting/secrets/simple bugs
+3. Semgrep catches security patterns (injection, XSS, auth bypass)
+4. AI reviewer only sees what automated tools missed
+5. Results are cached by commit hash — re-runs only show new issues
+6. By the time Copilot sees the PR, mechanical issues are already resolved
 
 ---
 

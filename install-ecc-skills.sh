@@ -206,7 +206,7 @@ install_agents() {
 # Save version info
 save_version() {
     echo "$ECC_VERSION" > "$VERSION_FILE"
-    echo "$(date -Iseconds)" >> "$VERSION_FILE"
+    date -Iseconds >> "$VERSION_FILE"
     log_info "Saved version info: $ECC_VERSION"
 }
 
@@ -221,6 +221,15 @@ run_integration() {
         log_info "Please run: ./scripts/integrate-ecc.sh"
     fi
 }
+
+# Install code review agent and pr-gate skill
+echo ""
+echo "=== Installing Code Review Agent ==="
+if [ -f "$(dirname "$0")/install-agents.sh" ]; then
+    bash "$(dirname "$0")/install-agents.sh"
+else
+    echo "Warning: install-agents.sh not found. Code review agent not installed."
+fi
 
 # Print summary
 print_summary() {

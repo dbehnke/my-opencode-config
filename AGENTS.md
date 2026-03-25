@@ -394,3 +394,43 @@ Use these to complement superpowers' process skills.
 - "Use golang-patterns to refactor this handler"
 - "Apply security-review to the authentication module"
 - "Use api-design principles for this endpoint"
+
+## Pre-PR Review Discipline
+
+CRITICAL: Before any `git push` or when asked to review code for a PR:
+
+1. Call the `$pr-gate` skill to run the full local review pipeline
+2. Use `@code-reviewer` for AI diff analysis — it returns structured JSON only
+3. Do NOT push if any `severity: error` issues exist
+4. The reviewer caches results by commit hash — only NEW issues surface on re-runs
+
+The `@code-reviewer` subagent detects languages automatically from the diff.
+Supported: JavaScript, TypeScript, Go, Python, Rust.
+
+### Linter Prerequisites by Language
+
+**Recommended:** Use [Megalinter](https://oxsecurity.github.io/megalinter/) + [Gitleaks](https://github.com/gitleaks/gitleaks) for maximum coverage with minimal setup.
+
+| Language | Linter(s) | Install |
+|---|---|---|
+| All | Megalinter (80+ linters) | `docker pull oxsecurity/megalinter` or `npm install -g mega-linter-runner` |
+| All | Gitleaks (secrets) | `brew install gitleaks` |
+| Security | Semgrep (custom rules) | `brew install semgrep` |
+| JS/TS | eslint, oxlint | `npm install -D eslint oxlint` |
+| Go | golangci-lint, go vet | `brew install golangci-lint` |
+| Python | ruff | `pip install ruff` |
+| Rust | cargo clippy | included with rustup |
+| Shell | shellcheck | `brew install shellcheck` |
+| GitHub Actions | actionlint | `brew install actionlint` |
+
+Missing linters are skipped gracefully — the review still runs.
+
+**Quick start (recommended):**
+```bash
+# Docker (recommended)
+docker pull oxsecurity/megalinter:latest
+mega-linter-runner
+
+# Gitleaks (secrets)
+gitleaks protect --staged
+```
