@@ -49,6 +49,28 @@ You have context-mode MCP tools available. These rules are NOT optional.
 - Search results can flood context
 - **Instead use:** `context-mode_ctx_execute(language: "shell", code: "grep ...")`
 
+### Approved Linting and Analysis Tools
+
+These tools should **always** use `context-mode_ctx_execute`:
+
+| Tool | Purpose |
+|------|---------|
+| `shellcheck` | Shell script linting |
+| `ruff` | Python linting |
+| `eslint` / `oxlint` | JavaScript/TypeScript linting |
+| `golangci-lint` / `go vet` | Go linting |
+| `cargo clippy` | Rust linting |
+| `markdownlint-cli2` | Markdown linting |
+| `alex` | Checking for insensitive language |
+| `gitleaks` | Secrets scanning |
+| `semgrep` | Static analysis / security |
+
+**Example:**
+```bash
+# Use ctx_execute for linting
+context-mode_ctx_execute(language: "shell", code: "shellcheck install-agents.sh")
+```
+
 ### Tool Selection Hierarchy
 
 1. **GATHER**: `context-mode_ctx_batch_execute(commands, queries)` — Primary tool
@@ -149,45 +171,7 @@ Superpowers provides **process discipline** and **development workflows**. These
 
 ---
 
-## Section 3: ECC Skills
-
-ECC provides **language-specific patterns** and fills gaps in superpowers. Request these explicitly in your prompts.
-
-### Language-Specific Patterns
-
-#### Go
-- **golang-patterns** — Idiomatic Go patterns, concurrency, error handling, best practices
-- **golang-testing** — Go testing patterns, TDD, benchmarks, table-driven tests
-- **go-reviewer** agent — Go code review specialist (idiomatic Go, concurrency, error handling)
-
-#### TypeScript/JavaScript
-- **frontend-patterns** — React, Next.js patterns and best practices
-- **backend-patterns** — API, database, caching patterns (TS/JS examples)
-- **api-design** — REST API design, pagination, error responses
-- **e2e-testing** — Playwright E2E patterns and Page Object Model
-- **typescript-reviewer** agent — TypeScript code review specialist
-
-#### Python
-- **python-patterns** — Pythonic idioms, PEP 8, type hints, best practices
-- **python-testing** — Python testing with pytest, fixtures, parametrization
-- **python-reviewer** agent — Python code review specialist
-
-#### Rust
-- **rust-patterns** — Idiomatic Rust patterns, ownership, error handling, traits
-- **rust-testing** — Rust testing patterns, mocking strategies
-- **rust-reviewer** agent — Rust code review specialist
-
-### Security & Documentation
-
-- **security-review** — Comprehensive security checklist and patterns
-- **security-reviewer** agent — Security-focused code review
-- **documentation-lookup** — API reference research workflow
-- **docs-lookup** agent — Documentation lookup specialist
-- **search-first** — Research-before-coding methodology
-
----
-
-## Section 4: Skill Selection Guide
+## Section 3: Skill Selection Guide
 
 **Critical: Avoid skill conflicts by using the right tool for each task.**
 
@@ -355,6 +339,8 @@ Use these to complement superpowers' process skills.
 **TypeScript/JavaScript**
 - **frontend-patterns** - React, Next.js patterns
 - **backend-patterns** - API, database, caching patterns
+- **bun-runtime** - Bun runtime idioms and patterns
+- **nextjs-turbopack** - Next.js with Turbopack patterns
 - **api-design** - REST API design, pagination, error responses
 - **e2e-testing** - Playwright E2E patterns
 - **typescript-reviewer** agent - TypeScript code review
@@ -368,6 +354,14 @@ Use these to complement superpowers' process skills.
 - **rust-patterns** - Idiomatic Rust patterns, ownership, error handling
 - **rust-testing** - Rust testing patterns
 - **rust-reviewer** agent - Rust code review
+
+**Shell**
+- **shell-patterns** - Shell script idioms, error handling, portability
+
+### DevOps & Deployment
+
+- **docker-patterns** - Docker and containerization best practices
+- **deployment-patterns** - Deployment strategies and infrastructure
 
 ### Security & Documentation
 
@@ -394,3 +388,45 @@ Use these to complement superpowers' process skills.
 - "Use golang-patterns to refactor this handler"
 - "Apply security-review to the authentication module"
 - "Use api-design principles for this endpoint"
+
+## Pre-PR Review Discipline
+
+CRITICAL: Before any `git push` or when asked to review code for a PR:
+
+1. Call the `$pr-gate` skill to run the full local review pipeline
+2. Use `@code-reviewer` for AI diff analysis — it returns structured JSON only
+3. Do NOT push if any `severity: error` issues exist
+4. The reviewer caches results by commit hash — only NEW issues surface on re-runs
+
+The `@code-reviewer` subagent detects languages automatically from the diff.
+Supported: JavaScript, TypeScript, Go, Python, Rust, Shell — plus cross-file
+consistency checks, markdown code block validation, and Semgrep-powered
+security and secrets scanning across all file types.
+
+### Linter Prerequisites by Language
+
+**Recommended:** Use [Megalinter](https://oxsecurity.github.io/megalinter/) + [Gitleaks](https://github.com/gitleaks/gitleaks) for maximum coverage with minimal setup.
+
+| Language | Linter(s) | Install |
+|---|---|---|
+| All | Megalinter (80+ linters) | `docker pull oxsecurity/megalinter` or `npm install -g mega-linter-runner` |
+| All | Gitleaks (secrets) | `brew install gitleaks` |
+| Security | Semgrep (custom rules) | `brew install semgrep` |
+| JS/TS | eslint, oxlint | `npm install -D eslint oxlint` |
+| Go | golangci-lint, go vet | `brew install golangci-lint` |
+| Python | ruff | `pip install ruff` |
+| Rust | cargo clippy | included with rustup |
+| Shell | shellcheck | `brew install shellcheck` |
+| GitHub Actions | actionlint | `brew install actionlint` |
+
+Missing linters are skipped gracefully — the review still runs.
+
+**Quick start (recommended):**
+```bash
+# Docker (recommended)
+docker pull oxsecurity/megalinter:latest
+mega-linter-runner
+
+# Gitleaks (secrets)
+gitleaks protect --staged
+```

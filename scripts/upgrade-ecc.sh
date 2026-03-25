@@ -7,7 +7,7 @@
 #   ./scripts/upgrade-ecc.sh --check-only # Just check, don't upgrade
 #   ./scripts/upgrade-ecc.sh --auto       # Upgrade without prompting
 
-set -e
+set -euo pipefail
 
 # Configuration
 ECC_REPO="affaan-m/everything-claude-code"
@@ -44,15 +44,15 @@ get_latest_version() {
     
     # Try to get version from GitHub API with timeout
     if command -v curl &> /dev/null; then
-        version=$(curl -s --max-time 10 "$api_url" 2>/dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+        version=$(curl -s --max-time 10 "$api_url" 2>/dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' || true)
     elif command -v wget &> /dev/null; then
-        version=$(wget -qO- --timeout=10 "$api_url" 2>/dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+        version=$(wget -qO- --timeout=10 "$api_url" 2>/dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' || true)
     fi
     
     if [ -z "$version" ] || [ "$version" = "null" ]; then
         # Fallback: try to get from git ls-remote
         version=$(git ls-remote --tags "https://github.com/${ECC_REPO}.git" 2>/dev/null | \
-            grep -o 'refs/tags/v[0-9.]*$' | sort -V | tail -1 | sed 's/refs\/tags\///')
+            grep -o 'refs/tags/v[0-9.]*$' | sort -V | tail -1 | sed 's/refs\/tags\///' || true)
     fi
     
     echo "$version"
@@ -70,7 +70,8 @@ compare_versions() {
     
     # Use sort -V if available, otherwise use simple string comparison
     if printf '%s\n' "$v1" "$v2" | sort -V > /dev/null 2>&1; then
-        local lowest=$(printf '%s\n%s\n' "$v1" "$v2" | sort -V | head -n1)
+        local lowest
+        lowest=$(printf '%s\n%s\n' "$v1" "$v2" | sort -V | head -n1)
         if [ "$lowest" = "$v1" ]; then
             return 2  # v1 < v2
         else
@@ -78,7 +79,7 @@ compare_versions() {
         fi
     else
         # Fallback: simple string comparison (works for most cases)
-        if [ "$v1" < "$v2" ]; then
+        if [[ "$v1" < "$v2" ]]; then
             return 2
         else
             return 1
@@ -90,8 +91,10 @@ compare_versions() {
 check_updates() {
     log_info "Checking for ECC updates..."
     
-    local installed=$(get_installed_version)
-    local latest=$(get_latest_version)
+    local installed
+    local latest
+    installed=$(get_installed_version)
+    latest=$(get_latest_version)
     
     echo ""
     log_highlight "Current version: ${installed}"
@@ -211,7 +214,8 @@ main() {
     local result=$?
     
     if [ $result -eq 2 ] && [ "$check_only" = false ]; then
-        local latest=$(get_latest_version)
+        local latest
+        latest=$(get_latest_version)
         
         if [ "$auto_upgrade" = true ]; then
             do_upgrade "$latest"

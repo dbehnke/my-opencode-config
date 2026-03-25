@@ -6,11 +6,119 @@ A practical guide for getting started with your OpenCode configuration.
 
 ## Table of Contents
 
-1. [Common Beginner Mistakes](#common-beginner-mistakes)
-2. [Example Workflows](#example-workflows)
-3. [Daily Usage Tips](#daily-usage-tips)
-4. [Troubleshooting Common Issues](#troubleshooting-common-issues)
-5. [Best Practices](#best-practices)
+1. [Before You Start](#before-you-start-dev-environment-setup)
+2. [Common Beginner Mistakes](#common-beginner-mistakes)
+3. [Example Workflows](#example-workflows)
+4. [Daily Usage Tips](#daily-usage-tips)
+5. [Troubleshooting Common Issues](#troubleshooting-common-issues)
+6. [Best Practices](#best-practices)
+
+---
+
+## Before You Start: Dev Environment Setup
+
+pr-gate runs linters before every push. Choose the setup that fits your workflow:
+
+---
+
+### Option A: Individual Linters (Universal)
+
+No Docker. Install via your package manager.
+
+```bash
+# JavaScript / TypeScript
+npm install -g eslint oxlint
+
+# Go (use your package manager)
+# brew install golangci-lint    # macOS
+# apt install golangci-lint   # Debian/Ubuntu
+# pacman -S golangci-lint     # Arch
+
+# Python
+# brew install ruff            # macOS
+# apt install ruff             # Debian/Ubuntu
+
+# Rust (included with rustup)
+
+# Shell
+# brew install shellcheck     # macOS
+# apt install shellcheck      # Debian/Ubuntu
+
+# Security
+# brew install semgrep        # macOS
+# or use Nix (see Option C)
+
+# Secrets
+# brew install gitleaks        # macOS
+# apt install gitleaks         # Debian/Ubuntu
+# or use Nix (see Option C)
+```
+
+**Note:** ESLint v9+ uses flat config (`eslint.config.js`) instead of `.eslintrc`.
+
+---
+
+### Option B: Megalinter (Convenience)
+
+One tool, Docker required (works on Linux, macOS, Windows).
+
+```bash
+# Docker (recommended)
+docker pull oxsecurity/megalinter:latest
+
+# Secrets (use package manager or Nix)
+# brew install gitleaks       # macOS
+# apt install gitleaks         # Debian/Ubuntu
+# or use Nix (see Option C)
+```
+
+**First-time:** Pull image before first run to avoid timeout.
+
+---
+
+### Option C: Nix (Reproducible)
+
+For power users. Reproducible environments without Docker.
+
+```bash
+# Install Nix (download, verify, then run)
+# See official verification guidance: https://nixos.org/manual/nix/stable/installation/installing-binary.html
+curl -fsSL https://nixos.org/nix/install -o /tmp/nix-install
+curl -fsSL https://nixos.org/nix/install.asc -o /tmp/nix-install.asc
+gpg --verify /tmp/nix-install.asc /tmp/nix-install 2>/dev/null || echo "GPG verification skipped - proceed with caution"
+bash /tmp/nix-install
+rm /tmp/nix-install /tmp/nix-install.asc
+
+# Add to your project's flake.nix:
+# packages = [ eslint oxlint golangci-lint ruff shellcheck semgrep gitleaks ]
+```
+
+---
+
+### Verification
+
+Test linters before your first push:
+
+```bash
+# Check each tool is reachable
+npx oxlint --version
+golangci-lint version
+ruff --version
+shellcheck --version
+semgrep --version
+gitleaks --version
+```
+
+### Troubleshooting
+
+| Problem | Solution |
+|---------|----------|
+| ESLint "config not found" | Use flat config or run `npx eslint` in project dir |
+| golangci-lint not found | `brew install golangci-lint` |
+| ruff not found | `brew install ruff` |
+| gitleaks not found | `brew install gitleaks` |
+| semgrep not found | `brew install semgrep` |
+| Megalinter slow first time | Pre-pull: `docker pull oxsecurity/megalinter:latest` |
 
 ---
 
@@ -239,6 +347,52 @@ AI: "For deployment, consider:"
 - `docker-patterns` for best practices
 - `security-review` catches container security issues
 - `deployment-patterns` for production readiness
+
+---
+
+### Workflow 5: Pre-PR Code Review
+
+**Scenario:** Feature is complete, about to push to remote
+
+```
+You: "run pr-gate"
+
+[pr-gate skill activates]
+AI: "Running pre-PR review pipeline..."
+[Runs Megalinter on changed files]
+[Runs Gitleaks on staged changes]
+[Invokes @code-reviewer for AI diff analysis]
+AI: "AI Review complete. No issues found."
+
+---
+PR Gate Results
+
+LINTER RESULTS
+| Tool       | Result                  |
+|------------|-------------------------|
+| Megalinter | ✅ 0 errors, 0 warnings |
+| Gitleaks   | ✅ No secrets detected  |
+
+AI DIFF REVIEW
+| Severity | Count |
+|----------|-------|
+| Errors   | 0     |
+| Warnings | 0     |
+
+Gate Decision: ✅ Clean. No issues found. Clear to push.
+```
+
+**Key Points:**
+- `pr-gate` runs Megalinter (80+ linters) + Gitleaks first (deterministic, fast)
+- `@code-reviewer` only reviews what linters miss
+- Results cached by commit hash — re-runs show only NEW issues
+- Catches mechanical issues, secrets, and security vulnerabilities before Copilot sees them
+
+**Usage:**
+```
+Before pushing:  "run pr-gate"
+Manual review:   "@code-reviewer review the current diff"
+```
 
 ---
 
@@ -515,6 +669,7 @@ Build organizational knowledge.
 | Large file analysis | Context-mode | Let it handle automatically |
 | API research | Context-mode + ECC | "Fetch and index..." |
 | Before commit | Superpowers | "Verify this is complete" |
+| Before push | pr-gate | "run pr-gate" |
 
 **Emergency Commands:**
 

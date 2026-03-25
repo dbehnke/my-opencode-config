@@ -7,10 +7,10 @@
 #
 # Usage:
 #   ./install-ecc-skills.sh                    # Install default skills
-#   ./install-ecc-skills.sh v1.9.1             # Install specific version
+#   ./install-ecc-skills.sh v1.9.0             # Install specific version
 #   ./install-ecc-skills.sh v1.9.0 my-skills.txt  # Custom skills list
 
-set -e
+set -euo pipefail
 
 # Configuration
 ECC_VERSION="${1:-v1.9.0}"
@@ -90,24 +90,59 @@ check_prerequisites() {
 create_default_skills_file() {
     cat > "$SKILLS_FILE" << 'EOF'
 # ECC Skills for OpenCode
-# Language-specific patterns (fill gaps in superpowers)
+#
+# These skills fill gaps in superpowers by providing:
+# - Language-specific patterns (Go, TypeScript, Python, Rust, Shell)
+# - Security auditing (missing from superpowers)
+# - Documentation lookup (missing from superpowers)
+#
+# NOTE: We intentionally skip skills that overlap with superpowers:
+# - tdd-workflow (use superpowers test-driven-development instead)
+# - verification-loop (use superpowers verification-before-completion)
+# - code-review (use superpowers requesting-code-review)
+
+# Language-Specific Patterns
+# Go
 golang-patterns
 golang-testing
+
+# TypeScript/JavaScript
 frontend-patterns
 backend-patterns
 bun-runtime
 nextjs-turbopack
 api-design
 e2e-testing
+
+# Python
 python-patterns
 python-testing
+
+# Rust
 rust-patterns
 rust-testing
 
-# Security & Documentation (superpowers gaps)
+# Shell
+shell-patterns
+
+# Security & Documentation (fills superpowers gaps)
 security-review
 documentation-lookup
+
+# DevOps & Deployment
+docker-patterns
+deployment-patterns
+
+# Research Workflow
 search-first
+
+# Code Review Agents (from ECC repo)
+go-reviewer
+typescript-reviewer
+python-reviewer
+rust-reviewer
+security-reviewer
+docs-lookup
 EOF
     log_success "Created default skills file: $SKILLS_FILE"
 }
@@ -206,7 +241,7 @@ install_agents() {
 # Save version info
 save_version() {
     echo "$ECC_VERSION" > "$VERSION_FILE"
-    echo "$(date -Iseconds)" >> "$VERSION_FILE"
+    date -Iseconds >> "$VERSION_FILE"
     log_info "Saved version info: $ECC_VERSION"
 }
 
@@ -219,6 +254,17 @@ run_integration() {
     else
         log_warn "Integration script not found. Manual integration required."
         log_info "Please run: ./scripts/integrate-ecc.sh"
+    fi
+}
+
+# Install code review agent and pr-gate skill
+install_code_review_agent() {
+    echo ""
+    echo "=== Installing Code Review Agent ==="
+    if [ -f "$(dirname "$0")/install-agents.sh" ]; then
+        bash "$(dirname "$0")/install-agents.sh" || true
+    else
+        echo "Warning: install-agents.sh not found. Code review agent not installed."
     fi
 }
 
@@ -255,6 +301,7 @@ main() {
     setup_install_dir
     install_skills
     install_agents
+    install_code_review_agent
     save_version
     run_integration
     print_summary
