@@ -7,7 +7,7 @@
 #   ./scripts/upgrade-ecc.sh --check-only # Just check, don't upgrade
 #   ./scripts/upgrade-ecc.sh --auto       # Upgrade without prompting
 
-set -e
+set -euo pipefail
 
 # Configuration
 ECC_REPO="affaan-m/everything-claude-code"
@@ -70,7 +70,8 @@ compare_versions() {
     
     # Use sort -V if available, otherwise use simple string comparison
     if printf '%s\n' "$v1" "$v2" | sort -V > /dev/null 2>&1; then
-        local lowest=$(printf '%s\n%s\n' "$v1" "$v2" | sort -V | head -n1)
+        local lowest
+        lowest=$(printf '%s\n%s\n' "$v1" "$v2" | sort -V | head -n1)
         if [ "$lowest" = "$v1" ]; then
             return 2  # v1 < v2
         else
@@ -90,8 +91,10 @@ compare_versions() {
 check_updates() {
     log_info "Checking for ECC updates..."
     
-    local installed=$(get_installed_version)
-    local latest=$(get_latest_version)
+    local installed
+    local latest
+    installed=$(get_installed_version)
+    latest=$(get_latest_version)
     
     echo ""
     log_highlight "Current version: ${installed}"
@@ -211,7 +214,8 @@ main() {
     local result=$?
     
     if [ $result -eq 2 ] && [ "$check_only" = false ]; then
-        local latest=$(get_latest_version)
+        local latest
+    latest=$(get_latest_version)
         
         if [ "$auto_upgrade" = true ]; then
             do_upgrade "$latest"

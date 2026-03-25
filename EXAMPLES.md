@@ -82,7 +82,7 @@ For power users. Reproducible environments without Docker.
 
 ```bash
 # Install Nix
-/bin/bash -c "$(curl -L https://nixos.org/nix/install)"
+curl -fsSL https://nixos.org/nix/install -o /tmp/nix-install && bash /tmp/nix-install && rm /tmp/nix-install
 
 # Add to your project's flake.nix:
 # packages = [ eslint oxlint golangci-lint ruff shellcheck semgrep gitleaks ]

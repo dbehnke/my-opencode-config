@@ -1,3 +1,49 @@
+# Redesign: Context-Aware code-reviewer Agent
+
+> Run from the root of your local `my-opencode-config` checkout.
+>
+> Usage:
+>   "read REDESIGN_CODE_REVIEWER.md and follow all instructions"
+>
+> This replaces `agents/code-reviewer.md` with a context-aware version
+> that reads full files and cross-references related files — the same
+> approach Copilot uses that caught issues our diff-only agent missed.
+
+---
+
+## What Changed and Why
+
+The previous agent was **diff-scoped**: it only read `git diff HEAD` and
+reviewed the changed hunks. This misses an entire class of issues:
+
+- Code outside a changed hunk that the new code is inconsistent with
+- Documentation in one file that contradicts code in another file
+- Shell commands inside markdown code blocks (shellcheck never sees these)
+- Structural patterns in a file that the new code breaks
+- Cross-file feature lists that get out of sync
+
+The new agent adds a **context-gather phase** before reviewing. It reads:
+1. The full content of every file touched by the diff (not just the hunks)
+2. Related files that are semantically connected to changed files
+3. Shell commands embedded in markdown, treated as real shell
+
+This matches what Copilot does and catches the class of issues it found
+that our agent missed.
+
+---
+
+## Step 1 — Replace `agents/code-reviewer.md`
+
+First verify you are in the repo root:
+
+```
+RUN pwd
+RUN ls agents/
+```
+
+Then replace `agents/code-reviewer.md` with exactly this content:
+
+````markdown
 ---
 description: Context-aware pre-PR code reviewer. Reads full file contents and cross-references related files before reviewing the diff. Supports JS, TS, Go, Python, Rust, Shell. Returns structured JSON. Invoke before pushing or opening a PR.
 mode: subagent
@@ -65,11 +111,7 @@ For EVERY file that appears in `git diff HEAD --name-only`:
 ### 2a. Read the full file, not just the diff hunk
 
 ```bash
-# For each changed file, read its full content
-while IFS= read -r f; do
-  echo "=== $f ==="
-  cat -- "$f"
-done < <(git diff HEAD --name-only)
+cat <each changed file>
 ```
 
 Do not skip this. The diff only shows changed lines. You need the full file
@@ -306,7 +348,7 @@ Flag any match as `severity: error`.
 ```bash
 # Cache/build artifacts accidentally committed
 (git diff HEAD --name-only | grep -E \
-  '\.(cache|pyc|pyo)$|__pycache__|\.pytest_cache|\.next|\.nuxt|node_modules|dist|\.tsbuildinfo|\.rustfmt' \
+  '\.(cache|pyc|pyo)$|__pycache__|\.pytest_cache|\.next|\.nuxt|node_modules|dist|\.tsbuildinfo' \
   && echo "CACHE_FILES_DETECTED") || true
 ```
 
@@ -352,3 +394,79 @@ This helps you understand which issues a simple diff reviewer would have missed.
 - For secrets: ALWAYS flag as `error`
 - For cross-file inconsistencies: flag as `warning` minimum
 - For structural pattern violations (code outside main()): flag as `warning`
+````
+
+---
+
+## Step 2 — Update `skills/pr-gate/SKILL.md`
+
+Add `markdownlint` to the linter pass in the skill. Find the shellcheck line
+in the "Option A: Individual Linters" Run section and replace:
+
+```bash
+shellcheck install-*.sh scripts/*.sh 2>&1 || true
+```
+
+With:
+
+```bash
+# Shell files — use git ls-files for portability across projects
+git ls-files '*.sh' | xargs -r shellcheck 2>&1 || true
+
+# Markdown files — catches duplicate step numbers, broken lists, etc.
+git diff HEAD --name-only | grep '\.md$' | xargs -r npx markdownlint 2>&1 || true
+```
+
+Also fix the hygiene grep to be non-fatal:
+
+Find:
+```bash
+git diff HEAD --name-only | grep -E '\.(cache|pyc|pyo)$|__pycache__|\.pytest_cache|\.next|\.nuxt|\.output|node_modules|\.turbo|\.vercel|\.netlify|dist|\.tsbuildinfo|\.rustfmt' && echo "CACHE_FILES_DETECTED"
+```
+
+Replace with:
+```bash
+(git diff HEAD --name-only | grep -E '\.(cache|pyc|pyo)$|__pycache__|\.pytest_cache|\.next|\.nuxt|\.output|node_modules|\.turbo|\.vercel|\.netlify|dist|\.tsbuildinfo|\.rustfmt' \
+  && echo "CACHE_FILES_DETECTED") || true
+```
+
+---
+
+## Step 3 — Update `AGENTS.md`
+
+Find the line:
+```
+Supported: JavaScript, TypeScript, Go, Python, Rust.
+```
+
+Replace with:
+```
+Supported: JavaScript, TypeScript, Go, Python, Rust, Shell — plus cross-file
+consistency checks, markdown code block validation, and Semgrep-powered
+security and secrets scanning across all file types.
+```
+
+---
+
+## Step 4 — Verify
+
+```
+RUN cat agents/code-reviewer.md | head -20
+RUN grep -n "context_source" agents/code-reviewer.md
+RUN grep -n "Phase" agents/code-reviewer.md
+RUN grep -n "markdownlint" skills/pr-gate/SKILL.md
+RUN grep -n "xargs -r shellcheck" skills/pr-gate/SKILL.md
+RUN grep -n "|| true" skills/pr-gate/SKILL.md | head -5
+RUN grep -n "Shell.*plus" AGENTS.md
+RUN git diff --stat
+```
+
+Confirm:
+- `agents/code-reviewer.md` has Phase 1 through Phase 5
+- `context_source` field exists in the JSON output schema
+- `markdownlint` appears in `skills/pr-gate/SKILL.md`
+- shellcheck line uses `git ls-files '*.sh' | xargs -r shellcheck`
+- hygiene grep is wrapped with `|| true`
+- AGENTS.md supported language line is updated
+
+Do not commit — leave that to the user.

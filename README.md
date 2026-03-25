@@ -189,7 +189,7 @@ Selected skills from [everything-claude-code](https://github.com/affaan-m/everyt
 
 **With specific version:**
 ```bash
-./install-ecc-skills.sh v1.9.1
+./install-ecc-skills.sh v1.9.0
 ```
 
 **Integration (automatic):**

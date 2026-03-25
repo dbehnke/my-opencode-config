@@ -7,10 +7,10 @@
 #
 # Usage:
 #   ./install-ecc-skills.sh                    # Install default skills
-#   ./install-ecc-skills.sh v1.9.1             # Install specific version
+#   ./install-ecc-skills.sh v1.9.0             # Install specific version
 #   ./install-ecc-skills.sh v1.9.0 my-skills.txt  # Custom skills list
 
-set -e
+set -euo pipefail
 
 # Configuration
 ECC_VERSION="${1:-v1.9.0}"

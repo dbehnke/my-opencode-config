@@ -118,7 +118,7 @@ For power users who want reproducible environments. No Docker, but requires Nix.
 **Install:**
 ```bash
 # Install Nix (if not already installed)
-/bin/bash -c "$(curl -L https://nixos.org/nix/install)"
+curl -fsSL https://nixos.org/nix/install -o /tmp/nix-install && bash /tmp/nix-install && rm /tmp/nix-install
 ```
 
 **With flake** (add to your project's `flake.nix`):
