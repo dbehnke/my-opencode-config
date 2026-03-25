@@ -78,7 +78,7 @@ compare_versions() {
         fi
     else
         # Fallback: simple string comparison (works for most cases)
-        if [ "$v1" < "$v2" ]; then
+        if [[ "$v1" < "$v2" ]]; then
             return 2
         else
             return 1
