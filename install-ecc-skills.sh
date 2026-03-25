@@ -90,24 +90,59 @@ check_prerequisites() {
 create_default_skills_file() {
     cat > "$SKILLS_FILE" << 'EOF'
 # ECC Skills for OpenCode
-# Language-specific patterns (fill gaps in superpowers)
+#
+# These skills fill gaps in superpowers by providing:
+# - Language-specific patterns (Go, TypeScript, Python, Rust, Shell)
+# - Security auditing (missing from superpowers)
+# - Documentation lookup (missing from superpowers)
+#
+# NOTE: We intentionally skip skills that overlap with superpowers:
+# - tdd-workflow (use superpowers test-driven-development instead)
+# - verification-loop (use superpowers verification-before-completion)
+# - code-review (use superpowers requesting-code-review)
+
+# Language-Specific Patterns
+# Go
 golang-patterns
 golang-testing
+
+# TypeScript/JavaScript
 frontend-patterns
 backend-patterns
 bun-runtime
 nextjs-turbopack
 api-design
 e2e-testing
+
+# Python
 python-patterns
 python-testing
+
+# Rust
 rust-patterns
 rust-testing
 
-# Security & Documentation (superpowers gaps)
+# Shell
+shell-patterns
+
+# Security & Documentation (fills superpowers gaps)
 security-review
 documentation-lookup
+
+# DevOps & Deployment
+docker-patterns
+deployment-patterns
+
+# Research Workflow
 search-first
+
+# Code Review Agents (from ECC repo)
+go-reviewer
+typescript-reviewer
+python-reviewer
+rust-reviewer
+security-reviewer
+docs-lookup
 EOF
     log_success "Created default skills file: $SKILLS_FILE"
 }

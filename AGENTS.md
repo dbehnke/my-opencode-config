@@ -149,45 +149,7 @@ Superpowers provides **process discipline** and **development workflows**. These
 
 ---
 
-## Section 3: ECC Skills
-
-ECC provides **language-specific patterns** and fills gaps in superpowers. Request these explicitly in your prompts.
-
-### Language-Specific Patterns
-
-#### Go
-- **golang-patterns** — Idiomatic Go patterns, concurrency, error handling, best practices
-- **golang-testing** — Go testing patterns, TDD, benchmarks, table-driven tests
-- **go-reviewer** agent — Go code review specialist (idiomatic Go, concurrency, error handling)
-
-#### TypeScript/JavaScript
-- **frontend-patterns** — React, Next.js patterns and best practices
-- **backend-patterns** — API, database, caching patterns (TS/JS examples)
-- **api-design** — REST API design, pagination, error responses
-- **e2e-testing** — Playwright E2E patterns and Page Object Model
-- **typescript-reviewer** agent — TypeScript code review specialist
-
-#### Python
-- **python-patterns** — Pythonic idioms, PEP 8, type hints, best practices
-- **python-testing** — Python testing with pytest, fixtures, parametrization
-- **python-reviewer** agent — Python code review specialist
-
-#### Rust
-- **rust-patterns** — Idiomatic Rust patterns, ownership, error handling, traits
-- **rust-testing** — Rust testing patterns, mocking strategies
-- **rust-reviewer** agent — Rust code review specialist
-
-### Security & Documentation
-
-- **security-review** — Comprehensive security checklist and patterns
-- **security-reviewer** agent — Security-focused code review
-- **documentation-lookup** — API reference research workflow
-- **docs-lookup** agent — Documentation lookup specialist
-- **search-first** — Research-before-coding methodology
-
----
-
-## Section 4: Skill Selection Guide
+## Section 3: Skill Selection Guide
 
 **Critical: Avoid skill conflicts by using the right tool for each task.**
 

@@ -306,7 +306,7 @@ Flag any match as `severity: error`.
 ```bash
 # Cache/build artifacts accidentally committed
 (git diff HEAD --name-only | grep -E \
-  '\.(cache|pyc|pyo)$|__pycache__|\.pytest_cache|\.next|\.nuxt|node_modules|dist|\.tsbuildinfo|\.rustfmt' \
+  '\.(cache|pyc|pyo)$|__pycache__|\.pytest_cache|\.next|\.nuxt|\.output|node_modules|\.turbo|\.vercel|\.netlify|dist|\.tsbuildinfo|\.rustfmt' \
   && echo "CACHE_FILES_DETECTED") || true
 ```
 
