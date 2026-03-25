@@ -258,13 +258,15 @@ run_integration() {
 }
 
 # Install code review agent and pr-gate skill
-echo ""
-echo "=== Installing Code Review Agent ==="
-if [ -f "$(dirname "$0")/install-agents.sh" ]; then
-    bash "$(dirname "$0")/install-agents.sh" || true
-else
-    echo "Warning: install-agents.sh not found. Code review agent not installed."
-fi
+install_code_review_agent() {
+    echo ""
+    echo "=== Installing Code Review Agent ==="
+    if [ -f "$(dirname "$0")/install-agents.sh" ]; then
+        bash "$(dirname "$0")/install-agents.sh" || true
+    else
+        echo "Warning: install-agents.sh not found. Code review agent not installed."
+    fi
+}
 
 # Print summary
 print_summary() {
@@ -299,6 +301,7 @@ main() {
     setup_install_dir
     install_skills
     install_agents
+    install_code_review_agent
     save_version
     run_integration
     print_summary

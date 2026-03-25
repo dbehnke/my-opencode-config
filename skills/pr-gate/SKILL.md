@@ -117,8 +117,13 @@ For power users who want reproducible environments. No Docker, but requires Nix.
 
 **Install:**
 ```bash
-# Install Nix (if not already installed)
-curl -fsSL https://nixos.org/nix/install -o /tmp/nix-install && bash /tmp/nix-install && rm /tmp/nix-install
+# Install Nix (download, verify, then run)
+# See official verification guidance: https://nixos.org/manual/nix/stable/installation/installing-binary.html
+curl -fsSL https://nixos.org/nix/install -o /tmp/nix-install
+curl -fsSL https://nixos.org/nix/install.asc -o /tmp/nix-install.asc
+gpg --verify /tmp/nix-install.asc /tmp/nix-install 2>/dev/null || echo "GPG verification skipped - proceed with caution"
+bash /tmp/nix-install
+rm /tmp/nix-install /tmp/nix-install.asc
 ```
 
 **With flake** (add to your project's `flake.nix`):

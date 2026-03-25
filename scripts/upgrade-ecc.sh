@@ -44,15 +44,15 @@ get_latest_version() {
     
     # Try to get version from GitHub API with timeout
     if command -v curl &> /dev/null; then
-        version=$(curl -s --max-time 10 "$api_url" 2>/dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+        version=$(curl -s --max-time 10 "$api_url" 2>/dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' || true)
     elif command -v wget &> /dev/null; then
-        version=$(wget -qO- --timeout=10 "$api_url" 2>/dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+        version=$(wget -qO- --timeout=10 "$api_url" 2>/dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' || true)
     fi
     
     if [ -z "$version" ] || [ "$version" = "null" ]; then
         # Fallback: try to get from git ls-remote
         version=$(git ls-remote --tags "https://github.com/${ECC_REPO}.git" 2>/dev/null | \
-            grep -o 'refs/tags/v[0-9.]*$' | sort -V | tail -1 | sed 's/refs\/tags\///')
+            grep -o 'refs/tags/v[0-9.]*$' | sort -V | tail -1 | sed 's/refs\/tags\///' || true)
     fi
     
     echo "$version"
