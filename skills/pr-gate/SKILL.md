@@ -64,7 +64,13 @@ npx oxlint . 2>&1 || true
 npx eslint . --format json --output-file /tmp/eslint-results.json 2>&1 || true
 golangci-lint run --out-format json > /tmp/golangci-results.json 2>&1 || true
 ruff check --output-format json . > /tmp/ruff-results.json 2>&1 || true
-shellcheck install-*.sh scripts/*.sh 2>&1 || true
+
+# Shell files — use git ls-files for portability across projects
+git ls-files '*.sh' | xargs -r shellcheck 2>&1 || true
+
+# Markdown files — catches duplicate step numbers, broken lists, etc.
+git diff HEAD --name-only | grep '\.md$' | xargs -r npx markdownlint 2>&1 || true
+
 semgrep --json --config=auto . > /tmp/semgrep-results.json 2>&1 || true
 
 # Secrets
@@ -149,7 +155,13 @@ npx oxlint . 2>&1 || true
 npx eslint . --format json --output-file /tmp/eslint-results.json 2>&1 || true
 golangci-lint run --out-format json > /tmp/golangci-results.json 2>&1 || true
 ruff check --output-format json . > /tmp/ruff-results.json 2>&1 || true
-shellcheck install-*.sh scripts/*.sh 2>&1 || true
+
+# Shell files — use git ls-files for portability
+git ls-files '*.sh' | xargs -r shellcheck 2>&1 || true
+
+# Markdown files
+git diff HEAD --name-only | grep '\.md$' | xargs -r npx markdownlint 2>&1 || true
+
 semgrep --json --config=auto . > /tmp/semgrep-results.json 2>&1 || true
 
 # Secrets
@@ -163,7 +175,9 @@ gitleaks protect --staged
 ### Hygiene pass
 ```bash
 # Check for accidentally committed cache/build artifacts
-git diff HEAD --name-only | grep -E '\.(cache|pyc|pyo)$|__pycache__|\.pytest_cache|\.next|\.nuxt|\.output|node_modules|\.turbo|\.vercel|\.netlify|dist|\.tsbuildinfo|\.rustfmt' && echo "CACHE_FILES_DETECTED"
+(git diff HEAD --name-only | grep -E \
+  '\.(cache|pyc|pyo)$|__pycache__|\.pytest_cache|\.next|\.nuxt|\.output|node_modules|\.turbo|\.vercel|\.netlify|dist|\.tsbuildinfo|\.rustfmt' \
+  && echo "CACHE_FILES_DETECTED") || true
 ```
 
 ---

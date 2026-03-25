@@ -369,6 +369,9 @@ Use these to complement superpowers' process skills.
 - **rust-testing** - Rust testing patterns
 - **rust-reviewer** agent - Rust code review
 
+**Shell**
+- **shell-patterns** - Shell script idioms, error handling, portability
+
 ### Security & Documentation
 
 - **security-review** - Security audit checklist and patterns
@@ -405,7 +408,9 @@ CRITICAL: Before any `git push` or when asked to review code for a PR:
 4. The reviewer caches results by commit hash — only NEW issues surface on re-runs
 
 The `@code-reviewer` subagent detects languages automatically from the diff.
-Supported: JavaScript, TypeScript, Go, Python, Rust.
+Supported: JavaScript, TypeScript, Go, Python, Rust, Shell — plus cross-file
+consistency checks, markdown code block validation, and Semgrep-powered
+security and secrets scanning across all file types.
 
 ### Linter Prerequisites by Language
 
