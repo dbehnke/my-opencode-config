@@ -355,6 +355,8 @@ Use these to complement superpowers' process skills.
 **TypeScript/JavaScript**
 - **frontend-patterns** - React, Next.js patterns
 - **backend-patterns** - API, database, caching patterns
+- **bun-runtime** - Bun runtime idioms and patterns
+- **nextjs-turbopack** - Next.js with Turbopack patterns
 - **api-design** - REST API design, pagination, error responses
 - **e2e-testing** - Playwright E2E patterns
 - **typescript-reviewer** agent - TypeScript code review
@@ -371,6 +373,11 @@ Use these to complement superpowers' process skills.
 
 **Shell**
 - **shell-patterns** - Shell script idioms, error handling, portability
+
+### DevOps & Deployment
+
+- **docker-patterns** - Docker and containerization best practices
+- **deployment-patterns** - Deployment strategies and infrastructure
 
 ### Security & Documentation
 

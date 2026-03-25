@@ -34,6 +34,9 @@ python-testing
 rust-patterns
 rust-testing
 
+# Shell
+shell-patterns
+
 # Security & Documentation (fills superpowers gaps)
 security-review
 documentation-lookup
@@ -44,3 +47,11 @@ deployment-patterns
 
 # Research Workflow
 search-first
+
+# Code Review Agents (from ECC repo)
+go-reviewer
+typescript-reviewer
+python-reviewer
+rust-reviewer
+security-reviewer
+docs-lookup

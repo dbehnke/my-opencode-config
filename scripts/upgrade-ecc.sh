@@ -215,7 +215,7 @@ main() {
     
     if [ $result -eq 2 ] && [ "$check_only" = false ]; then
         local latest
-    latest=$(get_latest_version)
+        latest=$(get_latest_version)
         
         if [ "$auto_upgrade" = true ]; then
             do_upgrade "$latest"

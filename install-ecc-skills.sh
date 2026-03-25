@@ -226,7 +226,7 @@ run_integration() {
 echo ""
 echo "=== Installing Code Review Agent ==="
 if [ -f "$(dirname "$0")/install-agents.sh" ]; then
-    bash "$(dirname "$0")/install-agents.sh"
+    bash "$(dirname "$0")/install-agents.sh" || true
 else
     echo "Warning: install-agents.sh not found. Code review agent not installed."
 fi
