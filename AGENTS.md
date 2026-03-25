@@ -49,6 +49,28 @@ You have context-mode MCP tools available. These rules are NOT optional.
 - Search results can flood context
 - **Instead use:** `context-mode_ctx_execute(language: "shell", code: "grep ...")`
 
+### Approved Linting and Analysis Tools
+
+These tools should **always** use `context-mode_ctx_execute`:
+
+| Tool | Purpose |
+|------|---------|
+| `shellcheck` | Shell script linting |
+| `ruff` | Python linting |
+| `eslint` / `oxlint` | JavaScript/TypeScript linting |
+| `golangci-lint` / `go vet` | Go linting |
+| `cargo clippy` | Rust linting |
+| `markdownlint-cli2` | Markdown linting |
+| `alex` | Checking for insensitive language |
+| `gitleaks` | Secrets scanning |
+| `semgrep` | Static analysis / security |
+
+**Example:**
+```bash
+# Use ctx_execute for linting
+context-mode_ctx_execute(language: "shell", code: "shellcheck install-agents.sh")
+```
+
 ### Tool Selection Hierarchy
 
 1. **GATHER**: `context-mode_ctx_batch_execute(commands, queries)` — Primary tool
