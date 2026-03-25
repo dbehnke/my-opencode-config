@@ -222,7 +222,7 @@ Check every bash/sh code block in changed markdown files for:
 
 ```bash
 # For any new .sh file in the diff, verify executable bit
-git diff HEAD --name-only | grep '\.sh$' | while read f; do
+git diff HEAD --name-only -- '*.sh' | while read -r f; do
   mode=$(git ls-files --stage "$f" | awk '{print $1}')
   if [ "$mode" != "100755" ]; then
     echo "MISSING_EXEC_BIT: $f (mode: $mode)"
