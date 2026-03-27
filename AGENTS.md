@@ -79,6 +79,17 @@ context-mode_ctx_execute(language: "shell", code: "shellcheck install-agents.sh"
 4. **WEB**: `context-mode_ctx_fetch_and_index` then `ctx_search` — Web content
 5. **INDEX**: `context-mode_ctx_index(content, source)` — Store for later search
 
+### MCP Tools
+
+The following MCP servers provide additional capabilities:
+
+| Server | Tools | Purpose |
+|--------|-------|---------|
+| `context-mode` | `ctx_batch_execute`, `ctx_execute`, `ctx_fetch_and_index`, `ctx_search` | Context protection and session continuity |
+| `playwright` | `playwright_navigate`, `playwright_screenshot`, `playwright_click`, `playwright_fill`, `playwright_evaluate` | Browser automation, screenshot capture |
+
+**Note:** Use `ctx_fetch_and_index` for documentation lookup; use Playwright MCP for live page interaction and screenshots.
+
 ### Output Constraints
 
 - Keep responses under 500 words
