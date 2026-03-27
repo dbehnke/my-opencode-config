@@ -310,7 +310,67 @@ Test the new skill:
 
 ---
 
-## 4. Code Review Agent
+## 4. MCP Servers
+
+MCP (Model Context Protocol) servers extend the AI's capabilities with executable tools. Unlike skills (which provide guidelines), MCP servers provide functional capabilities.
+
+### Playwright
+
+Browser automation for screenshot capture, page crawling, and DOM inspection.
+
+**Installation:**
+```bash
+npm install -g @modelcontextprotocol/server-playwright
+npx playwright install --with-deps
+```
+
+**Configuration:**
+Add to `~/.config/opencode/opencode.json`:
+```json
+{
+  "mcp": {
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-playwright"],
+      "enabled": true
+    }
+  }
+}
+```
+
+**Alternative (faster startup):**
+```bash
+npm install -g @modelcontextprotocol/server-playwright
+```
+
+Then in `opencode.json`:
+```json
+{
+  "mcp": {
+    "playwright": {
+      "type": "local",
+      "command": ["mcp-server-playwright"],
+      "enabled": true
+    }
+  }
+}
+```
+
+**Tools provided:**
+- `playwright_navigate` — Navigate to a URL
+- `playwright_screenshot` — Capture a screenshot
+- `playwright_click` — Click an element
+- `playwright_fill` — Fill a form field
+- `playwright_evaluate` — Execute JavaScript in browser context
+
+**Usage examples:**
+- "Take a screenshot of opencode.ai"
+- "Crawl this page and extract all links"
+- "Check if this page has a login form"
+
+---
+
+## 5. Code Review Agent
 
 A pre-PR review system that catches issues locally before pushing,
 breaking the endless AI review loop.
