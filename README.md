@@ -314,13 +314,18 @@ Test the new skill:
 
 MCP (Model Context Protocol) servers extend the AI's capabilities with executable tools. Unlike skills (which provide guidelines), MCP servers provide functional capabilities.
 
+**Quick install all MCP servers:**
+```
+Install Playwright MCP server: npm install -g @playwright/mcp && npx playwright install --with-deps, then add it to ~/.config/opencode/opencode.json as an MCP server with command ["playwright-mcp"] and enabled true.
+```
+
 ### Playwright
 
 Browser automation for screenshot capture, page crawling, and DOM inspection.
 
 **Installation:**
 ```bash
-npm install -g @modelcontextprotocol/server-playwright
+npm install -g @playwright/mcp
 npx playwright install --with-deps
 ```
 
@@ -331,25 +336,7 @@ Add to `~/.config/opencode/opencode.json`:
   "mcp": {
     "playwright": {
       "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-playwright"],
-      "enabled": true
-    }
-  }
-}
-```
-
-**Alternative (faster startup):**
-```bash
-npm install -g @modelcontextprotocol/server-playwright
-```
-
-Then in `opencode.json`:
-```json
-{
-  "mcp": {
-    "playwright": {
-      "type": "local",
-      "command": ["mcp-server-playwright"],
+      "command": ["playwright-mcp"],
       "enabled": true
     }
   }

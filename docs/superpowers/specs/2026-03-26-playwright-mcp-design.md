@@ -36,7 +36,7 @@ A **Playwright MCP server** entry that enables the AI to control a real browser.
 
 Users must install:
 ```bash
-npm install -g @modelcontextprotocol/server-playwright
+npm install -g @playwright/mcp
 npx playwright install --with-deps
 ```
 
@@ -49,27 +49,7 @@ Add to user's `~/.config/opencode/opencode.json`:
   "mcp": {
     "playwright": {
       "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-playwright"],
-      "enabled": true
-    }
-  }
-}
-```
-
-### Alternative: Global Install
-
-For faster startup (avoids `npx` fetch each time):
-```bash
-npm install -g @modelcontextprotocol/server-playwright
-```
-
-Then in `opencode.json`:
-```json
-{
-  "mcp": {
-    "playwright": {
-      "type": "local",
-      "command": ["mcp-server-playwright"],
+      "command": ["playwright-mcp"],
       "enabled": true
     }
   }
@@ -94,7 +74,7 @@ Browser automation for screenshot capture, page crawling, and DOM inspection.
 
 **Installation:**
 ```bash
-npm install -g @modelcontextprotocol/server-playwright
+npm install -g @playwright/mcp
 npx playwright install --with-deps
 ```
 
@@ -105,7 +85,7 @@ Add to `~/.config/opencode/opencode.json`:
   "mcp": {
     "playwright": {
       "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-playwright"],
+      "command": ["playwright-mcp"],
       "enabled": true
     }
   }
@@ -147,8 +127,8 @@ The following MCP servers provide additional capabilities:
 1. **Heavy browser binaries (~100MB+)**
    - **Mitigation**: Document clearly as optional; users who don't need browser automation can skip
 
-2. **`npx -y` fetch on every startup**
-   - **Mitigation**: Offer global install as alternative in documentation
+2. **Browser binaries not installed**
+   - **Mitigation**: Document that `npx playwright install --with-deps` is required separately
 
 3. **Security: AI controlling a browser**
    - **Mitigation**: Document that the AI only uses tools when explicitly requested by user
