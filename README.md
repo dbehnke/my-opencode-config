@@ -6,13 +6,44 @@ An opinionated, complete configuration for OpenCode combining three powerful sys
 2. **Superpowers** - Development process discipline and workflows
 3. **ECC** - Language-specific patterns and domain knowledge
 
-## Quick Start (One-Command Setup)
+## TLDR: Agent-Managed Install
 
-Copy and paste this into OpenCode to install the ECC layer after context-mode and Superpowers are in place:
+Paste this into OpenCode, Codex, Claude Code, or another local coding agent and let it do the setup end-to-end:
 
 ```
-Set up the ECC skills layer from https://github.com/dbehnke/my-opencode-config. First verify OpenCode is installed, context-mode is installed as an OpenCode plugin, and Superpowers is installed from its upstream instructions. Then clone this repository to a temporary directory like /tmp/my-opencode-config or any directory of your choice. Run: cd /tmp/my-opencode-config && ./install-ecc-skills.sh to install ECC skills and integrate them into ~/.config/opencode/opencode.json. Finally, verify AGENTS.md exists in the repository with routing rules for context-mode and references to available skills from Superpowers and ECC.
+Set up dbehnke's opinionated OpenCode configuration from https://github.com/dbehnke/my-opencode-config.
+
+Goal: install and verify OpenCode + context-mode + oh-my-openagent OpenAI subscriber profile + Superpowers + curated ECC skills.
+
+Use Node.js LTS, preferably Homebrew node@24 on macOS. Do not make Bun the primary runtime; only use it if OpenCode or a plugin cache requires it internally.
+
+Steps:
+1. Verify or install prerequisites: git, Node.js LTS, npm, OpenCode (`opencode-ai`), context-mode, and oh-my-openagent.
+2. Clone https://github.com/dbehnke/my-opencode-config.git to /tmp/my-opencode-config unless it already exists locally.
+3. Configure context-mode through the OpenCode `plugin` array only. Do not add legacy `mcp.context-mode`.
+4. Run `/tmp/my-opencode-config/scripts/install-openai-subscriber-profile.sh`.
+5. Install Superpowers by following the current upstream OpenCode instructions from https://raw.githubusercontent.com/obra/superpowers/refs/heads/main/.opencode/INSTALL.md.
+6. Run `/tmp/my-opencode-config/install-ecc-skills.sh`.
+7. Run `/tmp/my-opencode-config/scripts/doctor.sh` and fix anything it reports.
+8. Run `opencode auth login`, choose OpenAI browser/OAuth subscriber login, then run `opencode models --refresh`.
+9. Run `oh-my-openagent doctor --verbose` and confirm it reports 0 failures.
+
+Constraints:
+- Use the OpenAI/ChatGPT subscriber OAuth flow, not `OPENAI_API_KEY`, unless explicitly asked.
+- Keep context-mode for context/tool-output discipline, oh-my-openagent for model routing and agent orchestration, and ECC for curated domain skills.
+- Stay on stable ECC v1.10.0; do not install ECC 2.0 release candidates by default.
+- Do not commit local screenshots, caches, secrets, or generated backup files.
 ```
+
+## Manual Quick Start
+
+If you prefer to run commands yourself, install the stack in this order:
+
+1. Node.js LTS, OpenCode, context-mode, and oh-my-openagent.
+2. OpenAI subscriber profile from this repo.
+3. Superpowers from upstream instructions.
+4. Curated ECC skills from this repo.
+5. `./scripts/doctor.sh`.
 
 ## Upstream Audit Status
 
@@ -43,7 +74,7 @@ The doctor preserves this repo's integration boundaries:
 - `oh-my-openagent` must be registered for OpenCode, with its TUI plugin enabled.
 - ECC should stay on the curated stable line and register installed `SKILL.md` files.
 
-**Or manually clone first:**
+Clone this repo:
 ```bash
 # Use a temporary directory (recommended)
 git clone https://github.com/dbehnke/my-opencode-config.git /tmp/my-opencode-config
