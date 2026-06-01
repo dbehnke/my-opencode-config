@@ -53,43 +53,43 @@ billing. Keep model routing OpenAI-only by default:
 
 **PRIORITY: CRITICAL** - These rules protect your context window from flooding.
 
-You have context-mode MCP tools available. These rules are NOT optional.
+You have context-mode plugin tools available. These rules are NOT optional.
 
 ### BLOCKED Commands
 
 **curl / wget** — BLOCKED
 - Any shell command containing `curl` or `wget` will be intercepted
 - Do NOT retry with shell
-- **Instead use:** `context-mode_ctx_fetch_and_index(url, source)`
+- **Instead use:** `ctx_fetch_and_index(url, source)`
 
 **Inline HTTP** — BLOCKED  
 - Commands with `fetch('http`, `requests.get(`, `requests.post(`, etc.
 - Do NOT retry with shell
-- **Instead use:** `context-mode_ctx_execute(language, code)`
+- **Instead use:** `ctx_execute(language, code)`
 
 **Direct web fetching** — BLOCKED
 - Do NOT use any direct URL fetching tool
-- **Instead use:** `context-mode_ctx_fetch_and_index(url, source)` then `context-mode_ctx_search(queries)`
+- **Instead use:** `ctx_fetch_and_index(url, source)` then `ctx_search(queries)`
 
 ### REDIRECTED Tools
 
 **Shell (>20 lines output)**
 - Shell is ONLY for: `git`, `mkdir`, `rm`, `mv`, `cd`, `ls`, `npm install`, short commands
 - **Instead use:**
-  - `context-mode_ctx_batch_execute(commands, queries)` - Run multiple + search
-  - `context-mode_ctx_execute(language: "shell", code: "...")` - Sandbox execution
+  - `ctx_batch_execute(commands, queries)` - Run multiple + search
+  - `ctx_execute(language: "shell", code: "...")` - Sandbox execution
 
 **File reading (for analysis)**
 - If reading to **edit** → `Read` tool is correct
-- If reading to **analyze/explore/summarize** → `context-mode_ctx_execute_file(path, language, code)`
+- If reading to **analyze/explore/summarize** → `ctx_execute_file(path, language, code)`
 
 **grep / search (large results)**
 - Search results can flood context
-- **Instead use:** `context-mode_ctx_execute(language: "shell", code: "grep ...")`
+- **Instead use:** `ctx_execute(language: "shell", code: "grep ...")`
 
 ### Approved Linting and Analysis Tools
 
-These tools should **always** use `context-mode_ctx_execute`:
+These tools should **always** use `ctx_execute`:
 
 | Tool | Purpose |
 |------|---------|
@@ -106,18 +106,18 @@ These tools should **always** use `context-mode_ctx_execute`:
 **Example:**
 ```bash
 # Use ctx_execute for linting
-context-mode_ctx_execute(language: "shell", code: "shellcheck install-agents.sh")
+ctx_execute(language: "shell", code: "shellcheck install-agents.sh")
 ```
 
 ### Tool Selection Hierarchy
 
-1. **GATHER**: `context-mode_ctx_batch_execute(commands, queries)` — Primary tool
-2. **FOLLOW-UP**: `context-mode_ctx_search(queries: [...])` — Query indexed content  
-3. **PROCESSING**: `context-mode_ctx_execute` or `ctx_execute_file` — Sandbox execution
-4. **WEB**: `context-mode_ctx_fetch_and_index` then `ctx_search` — Web content
-5. **INDEX**: `context-mode_ctx_index(content, source)` — Store for later search
+1. **GATHER**: `ctx_batch_execute(commands, queries)` — Primary tool
+2. **FOLLOW-UP**: `ctx_search(queries: [...])` — Query indexed content
+3. **PROCESSING**: `ctx_execute` or `ctx_execute_file` — Sandbox execution
+4. **WEB**: `ctx_fetch_and_index` then `ctx_search` — Web content
+5. **INDEX**: `ctx_index(content, source)` — Store for later search
 
-### MCP Tools
+### Plugin and MCP Tools
 
 The following MCP servers provide additional capabilities:
 
@@ -138,9 +138,9 @@ The following MCP servers provide additional capabilities:
 
 | Command | Action |
 |---------|--------|
-| `ctx stats` | Context savings report |
-| `ctx doctor` | Diagnostics checklist |
-| `ctx upgrade` | Upgrade to latest version |
+| `context-mode stats` | Context savings report |
+| `context-mode doctor` | Diagnostics checklist |
+| `context-mode upgrade` | Upgrade to latest version |
 
 ---
 
@@ -359,7 +359,7 @@ If adding code in the future:
 
 ### Before Committing
 
-- Run `ctx stats` to verify context savings
+- Run `context-mode stats` to verify context savings
 - Review changes for accuracy
 - Ensure no secrets are exposed
 - Verify documentation is clear and complete

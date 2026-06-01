@@ -7,13 +7,13 @@
 #
 # Usage:
 #   ./install-ecc-skills.sh                    # Install default skills
-#   ./install-ecc-skills.sh v1.9.0             # Install specific version
-#   ./install-ecc-skills.sh v1.9.0 my-skills.txt  # Custom skills list
+#   ./install-ecc-skills.sh v1.10.0            # Install specific version
+#   ./install-ecc-skills.sh v1.10.0 my-skills.txt # Custom skills list
 
 set -euo pipefail
 
 # Configuration
-ECC_VERSION="${1:-v1.9.0}"
+ECC_VERSION="${1:-v1.10.0}"
 SKILLS_FILE="${2:-ecc-config/skills-list.txt}"
 ECC_REPO="https://github.com/affaan-m/everything-claude-code.git"
 TEMP_DIR=$(mktemp -d)
@@ -92,7 +92,7 @@ create_default_skills_file() {
 # ECC Skills for OpenCode
 #
 # These skills fill gaps in superpowers by providing:
-# - Language-specific patterns (Go, TypeScript, Python, Rust, Shell)
+# - Language-specific patterns (Go, TypeScript, Python, Rust)
 # - Security auditing (missing from superpowers)
 # - Documentation lookup (missing from superpowers)
 #
@@ -122,9 +122,6 @@ python-testing
 rust-patterns
 rust-testing
 
-# Shell
-shell-patterns
-
 # Security & Documentation (fills superpowers gaps)
 security-review
 documentation-lookup
@@ -135,14 +132,6 @@ deployment-patterns
 
 # Research Workflow
 search-first
-
-# Code Review Agents (from ECC repo)
-go-reviewer
-typescript-reviewer
-python-reviewer
-rust-reviewer
-security-reviewer
-docs-lookup
 EOF
     log_success "Created default skills file: $SKILLS_FILE"
 }

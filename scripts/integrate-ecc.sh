@@ -54,54 +54,56 @@ update_opencode_json() {
     backup_file "$OPENCODE_JSON"
     
     # Create temporary file with updated configuration
-    local temp_file=$(mktemp)
-    
-    # Check if instructions array already exists
-    if grep -q '"instructions"' "$OPENCODE_JSON"; then
-        log_warn "Instructions array already exists in opencode.json"
-        show_manual_update_instructions
-    else
-        # Add instructions array before the closing brace
-        if ! python3 << 'EOF' - "$OPENCODE_JSON" "$temp_file"
+    local temp_file
+    temp_file=$(mktemp)
+
+    if ! python3 - "$OPENCODE_JSON" "$temp_file" "$ECC_SKILLS_DIR" << 'EOF'
 import json
+import pathlib
 import sys
 
 try:
-    with open(sys.argv[1], 'r') as f:
+    config_path = sys.argv[1]
+    temp_path = sys.argv[2]
+    skills_dir = pathlib.Path(sys.argv[3]).expanduser()
+
+    with open(config_path, 'r') as f:
         config = json.load(f)
 
-    # Add instructions array with ECC skills
-    config['instructions'] = [
-        "~/.config/opencode/ecc-skills/golang-patterns/SKILL.md",
-        "~/.config/opencode/ecc-skills/golang-testing/SKILL.md",
-        "~/.config/opencode/ecc-skills/frontend-patterns/SKILL.md",
-        "~/.config/opencode/ecc-skills/backend-patterns/SKILL.md",
-        "~/.config/opencode/ecc-skills/api-design/SKILL.md",
-        "~/.config/opencode/ecc-skills/python-patterns/SKILL.md",
-        "~/.config/opencode/ecc-skills/python-testing/SKILL.md",
-        "~/.config/opencode/ecc-skills/rust-patterns/SKILL.md",
-        "~/.config/opencode/ecc-skills/security-review/SKILL.md",
-        "~/.config/opencode/ecc-skills/documentation-lookup/SKILL.md",
-        "~/.config/opencode/ecc-skills/search-first/SKILL.md"
+    instructions = config.setdefault('instructions', [])
+    if not isinstance(instructions, list):
+        raise TypeError('instructions must be an array')
+
+    skill_paths = [
+        f"~/.config/opencode/ecc-skills/{path.parent.name}/SKILL.md"
+        for path in sorted(skills_dir.glob("*/SKILL.md"))
     ]
 
-    with open(sys.argv[2], 'w') as f:
-        json.dump(config, f, indent=2)
+    existing = set(instructions)
+    added = 0
+    for skill_path in skill_paths:
+        if skill_path not in existing:
+            instructions.append(skill_path)
+            existing.add(skill_path)
+            added += 1
 
-    print("Added instructions array with ECC skills")
+    with open(temp_path, 'w') as f:
+        json.dump(config, f, indent=2)
+        f.write("\n")
+
+    print(f"Merged ECC instructions ({added} added, {len(skill_paths)} available)")
 except Exception as e:
     print(f"Error: {e}", file=sys.stderr)
     sys.exit(1)
 EOF
-        then
-            log_error "Failed to update opencode.json with Python"
-            show_manual_update_instructions
-            return 1
-        fi
-        
-        mv "$temp_file" "$OPENCODE_JSON"
-        log_success "Updated opencode.json with ECC skills"
+    then
+        log_error "Failed to update opencode.json with Python"
+        show_manual_update_instructions
+        return 1
     fi
+
+    mv "$temp_file" "$OPENCODE_JSON"
+    log_success "Updated opencode.json with ECC skills"
 }
 
 # Show manual update instructions
@@ -130,14 +132,13 @@ update_agents_md() {
         return
     fi
     
-    backup_file "$AGENTS_MD"
-    
     # Check if ECC section already exists
     if grep -q "## ECC Skills Reference" "$AGENTS_MD"; then
-        log_warn "ECC Skills section already exists in AGENTS.md"
-        log_info "Skipping AGENTS.md update"
+        log_info "ECC Skills section already exists in AGENTS.md; skipping update"
         return
     fi
+
+    backup_file "$AGENTS_MD"
     
     # Append ECC section to AGENTS.md
     cat >> "$AGENTS_MD" << 'EOF'
@@ -210,7 +211,7 @@ create_agents_md() {
 
 ## Context-Mode Routing Rules
 
-You have context-mode MCP tools available. These rules protect your context window.
+You have context-mode plugin tools available. These rules protect your context window.
 
 ### BLOCKED Commands
 - **curl / wget**: Use `ctx_fetch_and_index(url, source)` instead

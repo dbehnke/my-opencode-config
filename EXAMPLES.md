@@ -119,7 +119,7 @@ If you installed the bundled OMO OpenAI subscriber profile:
 ./scripts/install-openai-subscriber-profile.sh
 opencode auth login
 opencode models --refresh
-bunx oh-my-openagent doctor --verbose
+oh-my-openagent doctor --verbose
 ```
 
 Check the installed profile:
@@ -221,7 +221,7 @@ Installing context-mode, superpowers, and ECC simultaneously without verifying e
 
 **Right:**
 Follow the installation order and verify each component:
-1. Install context-mode → Run `ctx doctor`
+1. Install context-mode → Run `context-mode doctor`
 2. Install superpowers → Test with "Help me plan..."
 3. Install ECC → Test with "Use golang-patterns..."
 
@@ -550,7 +550,7 @@ to add password reset."
 ### Issue 2: Context-Mode Tools Not Available
 
 **Symptoms:**
-- `ctx doctor` not recognized
+- `context-mode doctor` not recognized
 - Agent uses raw curl commands
 
 **Solutions:**
@@ -579,7 +579,7 @@ to add password reset."
    - Look for `ctx_` tool calls in the conversation
 2. Verify AGENTS.md has routing rules
 3. Don't use raw bash for large outputs
-4. Use `ctx stats` to see savings
+4. Use `context-mode stats` to see savings
 
 ---
 
@@ -703,10 +703,10 @@ Build organizational knowledge.
 
 ```bash
 # Check everything is working
-ctx doctor
+context-mode doctor
 
 # See context savings
-ctx stats
+context-mode stats
 
 # Check installed skills
 ls ~/.config/opencode/skills/superpowers/skills/
@@ -726,7 +726,7 @@ If you're stuck:
 2. **Review AGENTS.md** - Skill reference is there
 3. **Run diagnostics:**
    ```bash
-   ctx doctor  # Context-mode
+   context-mode doctor  # Context-mode
    ls ~/.config/opencode/skills/superpowers/  # Superpowers
    ls ~/.config/opencode/ecc-skills/  # ECC
    ```

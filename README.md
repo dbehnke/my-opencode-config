@@ -8,11 +8,40 @@ An opinionated, complete configuration for OpenCode combining three powerful sys
 
 ## Quick Start (One-Command Setup)
 
-Copy and paste this into OpenCode to set up everything automatically:
+Copy and paste this into OpenCode to install the ECC layer after context-mode and Superpowers are in place:
 
 ```
-Set up the complete OpenCode configuration from https://github.com/dbehnke/my-opencode-config. First, clone the repository to a temporary directory like /tmp/my-opencode-config or any directory of your choice. Then run the install script: cd /tmp/my-opencode-config && ./install-ecc-skills.sh to install ECC skills. The script will automatically configure everything including context-mode verification, superpowers installation, and ECC skill integration. Finally, verify the setup by checking that AGENTS.md exists in the repository with complete routing rules for context-mode and references to all available skills from superpowers and ECC.
+Set up the ECC skills layer from https://github.com/dbehnke/my-opencode-config. First verify OpenCode is installed, context-mode is installed as an OpenCode plugin, and Superpowers is installed from its upstream instructions. Then clone this repository to a temporary directory like /tmp/my-opencode-config or any directory of your choice. Run: cd /tmp/my-opencode-config && ./install-ecc-skills.sh to install ECC skills and integrate them into ~/.config/opencode/opencode.json. Finally, verify AGENTS.md exists in the repository with routing rules for context-mode and references to available skills from Superpowers and ECC.
 ```
+
+## Upstream Audit Status
+
+Audited May 31, 2026 against the current upstream package/release state:
+
+| Component | Current observed upstream | Repo posture |
+|-----------|---------------------------|--------------|
+| OpenCode | `opencode-ai` npm `1.15.13` | Install/verify only; do not vendor |
+| context-mode | npm/release `1.0.157` | Use OpenCode `plugin` registration only |
+| oh-my-openagent | npm/release `4.5.12` | OpenAI subscriber profile included |
+| Superpowers | release `v5.1.0` | Install from upstream instructions |
+| ECC | latest stable tag `v1.10.0` | Default installer updated to `v1.10.0`; avoid `v2.0.0-rc.1` until stable |
+
+Security note: do not commit provider credentials into `~/.config/opencode/opencode.json` or this repo. Prefer OAuth/subscriber auth flows and secret-manager-backed setup for anything credentialed.
+
+## Doctor
+
+Run the repo doctor after installs, upgrades, or upstream audits:
+
+```bash
+./scripts/doctor.sh
+```
+
+The doctor preserves this repo's integration boundaries:
+
+- Node must be Homebrew-pinned Node 24 LTS.
+- `context-mode` must be registered through the OpenCode `plugin` array only.
+- `oh-my-openagent` must be registered for OpenCode, with its TUI plugin enabled.
+- ECC should stay on the curated stable line and register installed `SKILL.md` files.
 
 **Or manually clone first:**
 ```bash
@@ -35,16 +64,20 @@ Before installing, ensure you have:
 
 - **Node.js LTS** - Required for context-mode and MCP tooling
   - Download: https://nodejs.org/ (LTS version)
-  - Verify: `node --version` should show the active LTS major version
+  - macOS/Homebrew: `brew install node@24 && brew link --overwrite --force node@24 && brew pin node@24`
+  - As of May 31, 2026, Node 24 is the active LTS line; Node 26 is Current until its scheduled October 2026 LTS promotion.
+  - Verify: `node --version` should show the active LTS major version.
 
 - **Git** - For cloning repositories
   - Verify: `git --version`
 
 - **OpenCode** - Latest stable release
   - Download: https://opencode.ai
+  - npm install: `npm install -g opencode-ai`
   - Verify: `opencode --version`
 
 - **Bun is optional** - This config is Node LTS-first. Use Bun only for tools that explicitly require it.
+  - OpenCode may still use Bun internally for its plugin cache; this repo's install commands should not require Bun for normal setup.
 
 ## Installation Order
 
@@ -74,7 +107,7 @@ Then authenticate OpenAI through OpenCode:
 opencode auth login
 # Choose OpenAI and complete the browser/OAuth subscriber flow.
 opencode models --refresh
-bunx oh-my-openagent doctor --verbose
+oh-my-openagent doctor --verbose
 ```
 
 The profile template lives at:
@@ -105,13 +138,13 @@ Context-mode protects your context window by sandboxing large outputs (logs, API
 - **98% context reduction** via sandboxing
 - **Session continuity** with SQLite-based tracking
 - **FTS5 search** with BM25 ranking
-- **MCP protocol layer** - works below the agent level
+- **Native OpenCode plugin tools** - registers `ctx_*` tools through OpenCode's plugin system
 
 ### Installation
 
 **Option 1: Quick Install (Prompt)**
 ```
-Install context-mode globally for opencode: npm install -g context-mode, then add it to ~/.config/opencode/opencode.json as an MCP server with command ["context-mode"] and enabled true, and add "context-mode" to the plugin array. Verify with ctx doctor.
+Install context-mode globally for opencode: npm install -g context-mode, then add "context-mode" to the plugin array in ~/.config/opencode/opencode.json. Do not also add mcp.context-mode. Verify with context-mode doctor.
 ```
 
 **Option 2: Manual**
@@ -122,21 +155,16 @@ npm install -g context-mode
 Then add to `~/.config/opencode/opencode.json`:
 ```json
 {
-  "mcp": {
-    "context-mode": {
-      "type": "local",
-      "command": ["context-mode"],
-      "enabled": true
-    }
-  },
   "plugin": ["context-mode"]
 }
 ```
 
+If an older config has both `plugin: ["context-mode"]` and `mcp.context-mode`, run `context-mode upgrade` or remove the `mcp.context-mode` block manually. Current context-mode OpenCode support registers tools and hooks through the plugin path; the duplicate MCP path can result in zero `ctx_*` tools.
+
 **Verify:**
 ```bash
-ctx doctor
-ctx stats
+context-mode doctor
+context-mode stats
 ```
 
 ### Available Tools
@@ -228,7 +256,7 @@ Selected skills from [everything-claude-code](https://github.com/affaan-m/everyt
 
 **With specific version:**
 ```bash
-./install-ecc-skills.sh v1.9.0
+./install-ecc-skills.sh v1.10.0
 ```
 
 **Integration (automatic):**
@@ -480,9 +508,10 @@ always find something new. This agent front-loads analysis locally:
 
 ### Step 1: Install Context-mode
 ```bash
+npm install -g opencode-ai oh-my-openagent
 npm install -g context-mode
-# Configure opencode.json (see above)
-ctx doctor  # Verify
+# Configure opencode.json plugin array only (see above)
+context-mode doctor  # Verify
 ```
 
 ### Step 2: Install Superpowers
@@ -523,7 +552,7 @@ Add context-mode routing rules (see AGENTS.md in this repo for full example).
 
 Test context-mode:
 ```
-ctx stats
+context-mode stats
 ```
 
 Test superpowers:
@@ -608,9 +637,10 @@ my-opencode-config/
 ## Troubleshooting
 
 ### Context-mode not working
-- Verify: `ctx doctor`
-- Check opencode.json has context-mode in mcp and plugin arrays
+- Verify: `context-mode doctor`
+- Check `opencode.json` has `context-mode` in the `plugin` array only, not both `plugin` and `mcp.context-mode`
 - Restart OpenCode
+- Run `./scripts/doctor.sh`
 
 ### Superpowers not triggering
 - Verify: `ls ~/.config/opencode/skills/superpowers/skills/`
@@ -624,6 +654,7 @@ my-opencode-config/
 
 ### Conflicts between systems
 - Ensure installation order: context-mode → superpowers → ECC
+- Run `./scripts/doctor.sh` to detect duplicate context-mode registration, missing OMO plugin setup, and missing ECC instructions.
 - Don't use ECC memory/hook features (disabled by design)
 - Check AGENTS.md routing rules are clear
 
