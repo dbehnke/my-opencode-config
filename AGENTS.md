@@ -4,7 +4,7 @@ This file provides guidelines for AI agents working in this repository.
 
 ## Project Overview
 
-This repository uses a three-layer configuration system for OpenCode:
+This repository uses a four-layer configuration system for OpenCode:
 1. **Context-mode** - Context window protection and session continuity
 2. **oh-my-openagent / OMO profile** - Opinionated agent/model routing for OpenCode
 3. **Superpowers** - Development process discipline and workflows
@@ -15,8 +15,9 @@ This repository uses a three-layer configuration system for OpenCode:
 ## Section 0: Runtime and Model Policy
 
 **Node LTS first.** This repo's install guidance should prefer Node.js LTS and `npm`/`npx`
-for context-mode and MCP tools. Bun is optional and should only be required by tools that
-explicitly need Bun.
+for context-mode and MCP tools. On macOS, prefer Homebrew `node@24` pinned as the active
+runtime. Bun is optional and should only be required by tools that explicitly need Bun or
+by OpenCode's internal plugin cache.
 
 **OpenAI subscriber profile.** The curated OMO config lives at:
 
@@ -44,8 +45,18 @@ billing. Keep model routing OpenAI-only by default:
 |-----------|-----------------|
 | Orchestration / review | `openai/gpt-5.5` |
 | Deep coding | `openai/gpt-5.3-codex` |
+| Lightweight coding agent | `openai/gpt-5.3-codex-spark` |
 | Fast/simple work | `openai/gpt-5.4-mini` / `openai/gpt-5.4-mini-fast` |
 | Vision / PDFs | `openai/gpt-5.4`, then `openai/gpt-5.3-codex` |
+
+**Doctor guardrail.** After install, upgrade, or meaningful config edits, run:
+
+```bash
+./scripts/doctor.sh
+```
+
+The doctor preserves the current boundaries: Node 24 LTS, context-mode plugin-only,
+oh-my-openagent plugin/TUI registration, and stable curated ECC skills.
 
 ---
 
@@ -261,7 +272,7 @@ Superpowers provides **process discipline** and **development workflows**. These
 
 ---
 
-## Section 5: Usage Examples
+## Section 4: Usage Examples
 
 ### Context-Mode Examples
 
@@ -310,7 +321,7 @@ Superpowers provides **process discipline** and **development workflows**. These
 
 ---
 
-## Section 6: Build/Test/Lint Commands
+## Section 5: Build/Test/Lint Commands
 
 This is a documentation repository. No build, test, or lint commands are currently configured.
 
@@ -321,7 +332,7 @@ If adding code in the future:
 
 ---
 
-## Section 7: Code Style Guidelines
+## Section 6: Code Style Guidelines
 
 ### Markdown Documentation
 - Use ATX-style headers (`#` not `===` underlines)
@@ -344,7 +355,7 @@ If adding code in the future:
 
 ---
 
-## Section 8: AI Agent Instructions
+## Section 7: AI Agent Instructions
 
 ### When Working in This Repo
 
@@ -360,6 +371,7 @@ If adding code in the future:
 ### Before Committing
 
 - Run `context-mode stats` to verify context savings
+- Run `./scripts/doctor.sh` to verify integration boundaries
 - Review changes for accuracy
 - Ensure no secrets are exposed
 - Verify documentation is clear and complete
@@ -404,9 +416,6 @@ Use these to complement superpowers' process skills.
 - **rust-patterns** - Idiomatic Rust patterns, ownership, error handling
 - **rust-testing** - Rust testing patterns
 - **rust-reviewer** agent - Rust code review
-
-**Shell**
-- **shell-patterns** - Shell script idioms, error handling, portability
 
 ### DevOps & Deployment
 
