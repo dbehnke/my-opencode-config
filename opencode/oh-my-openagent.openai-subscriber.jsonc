@@ -1,0 +1,102 @@
+{
+  "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-openagent/dev/assets/oh-my-opencode.schema.json",
+
+  // Opinionated OpenAI/ChatGPT subscriber profile.
+  //
+  // Auth model:
+  // - Use OpenCode's OAuth/subscriber auth:
+  //   opencode auth login
+  //   opencode models --refresh
+  // - Do not use OPENAI_API_KEY unless you intentionally want API-key billing.
+  //
+  // Native profile support, when available in your installed OMO build:
+  // "provider_profile": "codex_subscriber_only",
+  // "codex_subscriber": { "experimental_models": false },
+
+  "agents": {
+    "sisyphus": {
+      "model": "openai/gpt-5.5",
+      "variant": "medium"
+    },
+    "hephaestus": {
+      "model": "openai/gpt-5.3-codex"
+    },
+    "oracle": {
+      "model": "openai/gpt-5.5",
+      "variant": "high"
+    },
+    "librarian": {
+      "model": "openai/gpt-5.4-mini-fast",
+      "fallback_models": ["openai/gpt-5.4-mini"]
+    },
+    "explore": {
+      "model": "openai/gpt-5.4-mini-fast",
+      "fallback_models": ["openai/gpt-5.4-mini"]
+    },
+    "multimodal-looker": {
+      "model": "openai/gpt-5.4",
+      "variant": "medium",
+      "fallback_models": [
+        "openai/gpt-5.3-codex",
+        "openai/gpt-5.5"
+      ]
+    },
+    "prometheus": {
+      "model": "openai/gpt-5.5",
+      "variant": "high"
+    },
+    "metis": {
+      "model": "openai/gpt-5.5",
+      "variant": "high"
+    },
+    "momus": {
+      "model": "openai/gpt-5.5",
+      "variant": "xhigh"
+    },
+    "atlas": {
+      "model": "openai/gpt-5.5",
+      "variant": "medium"
+    },
+    "sisyphus-junior": {
+      "model": "openai/gpt-5.3-codex"
+    }
+  },
+
+  "categories": {
+    "visual-engineering": {
+      "model": "openai/gpt-5.5",
+      "variant": "high"
+    },
+    "ultrabrain": {
+      "model": "openai/gpt-5.5",
+      "variant": "xhigh"
+    },
+    "deep": {
+      "model": "openai/gpt-5.3-codex",
+      "fallback_models": [
+        {
+          "model": "openai/gpt-5.5",
+          "variant": "medium"
+        }
+      ]
+    },
+    "artistry": {
+      "model": "openai/gpt-5.5",
+      "variant": "high"
+    },
+    "quick": {
+      "model": "openai/gpt-5.4-mini"
+    },
+    "unspecified-low": {
+      "model": "openai/gpt-5.4-mini"
+    },
+    "unspecified-high": {
+      "model": "openai/gpt-5.5",
+      "variant": "high"
+    },
+    "writing": {
+      "model": "openai/gpt-5.5",
+      "variant": "medium"
+    }
+  }
+}

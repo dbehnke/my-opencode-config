@@ -6,8 +6,46 @@ This file provides guidelines for AI agents working in this repository.
 
 This repository uses a three-layer configuration system for OpenCode:
 1. **Context-mode** - Context window protection and session continuity
-2. **Superpowers** - Development process discipline and workflows  
-3. **ECC** - Language-specific patterns and domain knowledge
+2. **oh-my-openagent / OMO profile** - Opinionated agent/model routing for OpenCode
+3. **Superpowers** - Development process discipline and workflows
+4. **ECC** - Language-specific patterns and domain knowledge
+
+---
+
+## Section 0: Runtime and Model Policy
+
+**Node LTS first.** This repo's install guidance should prefer Node.js LTS and `npm`/`npx`
+for context-mode and MCP tools. Bun is optional and should only be required by tools that
+explicitly need Bun.
+
+**OpenAI subscriber profile.** The curated OMO config lives at:
+
+```text
+opencode/oh-my-openagent.openai-subscriber.jsonc
+```
+
+Install it with:
+
+```bash
+./scripts/install-openai-subscriber-profile.sh
+```
+
+This profile is for OpenCode's OpenAI browser/OAuth subscriber login:
+
+```bash
+opencode auth login
+opencode models --refresh
+```
+
+Do not introduce `OPENAI_API_KEY` guidance unless the user explicitly asks for direct API-key
+billing. Keep model routing OpenAI-only by default:
+
+| Work type | Preferred model |
+|-----------|-----------------|
+| Orchestration / review | `openai/gpt-5.5` |
+| Deep coding | `openai/gpt-5.3-codex` |
+| Fast/simple work | `openai/gpt-5.4-mini` / `openai/gpt-5.4-mini-fast` |
+| Vision / PDFs | `openai/gpt-5.4`, then `openai/gpt-5.3-codex` |
 
 ---
 
@@ -277,7 +315,8 @@ Superpowers provides **process discipline** and **development workflows**. These
 This is a documentation repository. No build, test, or lint commands are currently configured.
 
 If adding code in the future:
-- Use `bun` as the package manager
+- Use Node.js LTS and `npm`/`npx` by default
+- Use Bun only when the specific tool requires it
 - Add appropriate package.json scripts for linting/formatting
 
 ---

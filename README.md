@@ -33,9 +33,9 @@ cd ~/my-opencode-config
 
 Before installing, ensure you have:
 
-- **Node.js LTS** (v24 as of this writing) - Required for context-mode
+- **Node.js LTS** - Required for context-mode and MCP tooling
   - Download: https://nodejs.org/ (LTS version)
-  - Verify: `node --version` should show v24.x.x or higher
+  - Verify: `node --version` should show the active LTS major version
 
 - **Git** - For cloning repositories
   - Verify: `git --version`
@@ -44,17 +44,56 @@ Before installing, ensure you have:
   - Download: https://opencode.ai
   - Verify: `opencode --version`
 
-- **(Optional) Bun** - For faster context-mode execution
-  - Automatically detected if installed
-  - Falls back to Node.js if not available
+- **Bun is optional** - This config is Node LTS-first. Use Bun only for tools that explicitly require it.
 
 ## Installation Order
 
 **Install in this sequence to avoid conflicts:**
 
 1. **Context-mode** (Foundation) - Context protection and session management
-2. **Superpowers** (Process) - Development workflows and discipline
-3. **ECC** (Domain Knowledge) - Language patterns and specialized skills
+2. **oh-my-openagent / OMO profile** (Agents) - Opinionated OpenAI subscriber model routing
+3. **Superpowers** (Process) - Development workflows and discipline
+4. **ECC** (Domain Knowledge) - Language patterns and specialized skills
+
+---
+
+## 0. OpenAI Subscriber OMO Profile
+
+This repo includes an opinionated `oh-my-openagent` profile for users who want to run OpenCode
+against a ChatGPT/OpenAI subscriber account, not direct OpenAI API keys.
+
+Install the profile:
+
+```bash
+./scripts/install-openai-subscriber-profile.sh
+```
+
+Then authenticate OpenAI through OpenCode:
+
+```bash
+opencode auth login
+# Choose OpenAI and complete the browser/OAuth subscriber flow.
+opencode models --refresh
+bunx oh-my-openagent doctor --verbose
+```
+
+The profile template lives at:
+
+```text
+opencode/oh-my-openagent.openai-subscriber.jsonc
+```
+
+Model policy:
+
+| Role | Primary |
+|------|---------|
+| Sisyphus, Atlas | `openai/gpt-5.5` medium |
+| Hephaestus, deep work | `openai/gpt-5.3-codex` |
+| Librarian, Explore | `openai/gpt-5.4-mini-fast` |
+| Quick tasks | `openai/gpt-5.4-mini` |
+| Vision / `look_at` | `openai/gpt-5.4`, fallback `gpt-5.3-codex`, then `gpt-5.5` |
+
+Do not set `OPENAI_API_KEY` for this profile unless you intentionally want API-key billing.
 
 ---
 

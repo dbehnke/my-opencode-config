@@ -17,6 +17,8 @@ A practical guide for getting started with your OpenCode configuration.
 
 ## Before You Start: Dev Environment Setup
 
+This configuration is Node LTS-first. Install Bun only for projects that explicitly require Bun.
+
 pr-gate runs linters before every push. Choose the setup that fits your workflow:
 
 ---
@@ -108,6 +110,32 @@ shellcheck --version
 semgrep --version
 gitleaks --version
 ```
+
+### OpenAI Subscriber Profile Verification
+
+If you installed the bundled OMO OpenAI subscriber profile:
+
+```bash
+./scripts/install-openai-subscriber-profile.sh
+opencode auth login
+opencode models --refresh
+bunx oh-my-openagent doctor --verbose
+```
+
+Check the installed profile:
+
+```bash
+grep -A4 '"hephaestus"' ~/.config/opencode/oh-my-openagent.jsonc
+grep -A8 '"multimodal-looker"' ~/.config/opencode/oh-my-openagent.jsonc
+```
+
+Expected model routing:
+
+| Work type | Model |
+|-----------|-------|
+| Deep coding | `openai/gpt-5.3-codex` |
+| Quick edits | `openai/gpt-5.4-mini` |
+| Vision/PDFs | `openai/gpt-5.4` with `gpt-5.3-codex` fallback |
 
 ### Troubleshooting
 
