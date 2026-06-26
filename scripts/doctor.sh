@@ -160,8 +160,8 @@ if [ -f "$ECC_VERSION_FILE" ]; then
   ecc_version="$(head -n 1 "$ECC_VERSION_FILE")"
   case "$ecc_version" in
     *rc*|*alpha*|*beta*) warn "ECC version is prerelease: $ecc_version" ;;
-    v1.10.0) pass "ECC stable version installed: $ecc_version" ;;
-    *) warn "ECC version differs from curated default v1.10.0: $ecc_version" ;;
+    v2.0.0) pass "ECC stable version installed: $ecc_version" ;;
+    *) warn "ECC version differs from curated default v2.0.0: $ecc_version" ;;
   esac
 else
   warn "ECC version file missing: $ECC_VERSION_FILE"

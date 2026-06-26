@@ -727,6 +727,9 @@ ls ~/.config/opencode/ecc-skills/
 ./scripts/upgrade-ecc.sh
 ```
 
+The default ECC path installs this repo's curated `v2.0.0` skill and agent set only. It does not
+enable ECC v2 hooks, control-pane, plugin scaffolds, commands, or full harness profiles.
+
 ---
 
 ## Getting Help

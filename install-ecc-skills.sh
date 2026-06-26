@@ -7,13 +7,13 @@
 #
 # Usage:
 #   ./install-ecc-skills.sh                    # Install default skills
-#   ./install-ecc-skills.sh v1.10.0            # Install specific version
-#   ./install-ecc-skills.sh v1.10.0 my-skills.txt # Custom skills list
+#   ./install-ecc-skills.sh v2.0.0            # Install specific version
+#   ./install-ecc-skills.sh v2.0.0 my-skills.txt # Custom skills list
 
 set -euo pipefail
 
 # Configuration
-ECC_VERSION="${1:-v1.10.0}"
+ECC_VERSION="${1:-v2.0.0}"
 SKILLS_FILE="${2:-ecc-config/skills-list.txt}"
 ECC_REPO="https://github.com/affaan-m/everything-claude-code.git"
 TEMP_DIR=$(mktemp -d)
@@ -184,10 +184,10 @@ install_skills() {
         if [ -d "$skill_path" ]; then
             log_info "Installing skill: $skill"
             cp -r "$skill_path" "$INSTALL_DIR/"
-            ((install_count++))
+            install_count=$((install_count + 1))
         else
             log_warn "Skill not found: $skill"
-            ((skip_count++))
+            skip_count=$((skip_count + 1))
         fi
     done < "$SKILLS_FILE"
     
@@ -218,7 +218,7 @@ install_agents() {
         if [ -f "$agent_path" ]; then
             log_info "Installing agent: $agent"
             cp "$agent_path" "$INSTALL_DIR/"
-            ((install_count++))
+            install_count=$((install_count + 1))
         else
             log_warn "Agent not found: $agent"
         fi

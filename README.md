@@ -31,7 +31,7 @@ Steps:
 Constraints:
 - Use the OpenAI/ChatGPT subscriber OAuth flow, not `OPENAI_API_KEY`, unless explicitly asked.
 - Keep context-mode for context/tool-output discipline, oh-my-openagent for model routing and agent orchestration, and ECC for curated domain skills.
-- Stay on stable ECC v1.10.0 by default. ECC v2.0.0 is stable upstream, but defer migration until Option 2 passes tests.
+- Stay on stable ECC v2.0.0 for the curated skill and agent set. Do not install ECC v2 hooks, control-pane, plugin scaffolds, commands, or full harness profiles by default.
 - Do not commit local screenshots, caches, secrets, or generated backup files.
 ```
 
@@ -55,11 +55,12 @@ Audited June 26, 2026 against the current upstream package/release state:
 | context-mode | npm/release `1.0.168` | Use OpenCode `plugin` registration only |
 | oh-my-openagent | npm/release `4.13.0` | OpenAI subscriber profile included |
 | Superpowers | release `v6.0.3` | Install from upstream instructions |
-| ECC | latest stable tag `v2.0.0` | Keep default installer on `v1.10.0`; research the ECC 2.0 migration later |
+| ECC | latest stable tag `v2.0.0` | Default installer uses curated `v2.0.0` skills and agents only |
 
-ECC 2.0 migration note: `v2.0.0` is now stable and desirable to evaluate, but this repo is
-deferring migration. Do not install or migrate to ECC 2.0 until Option 2 passes tests and the
-installer, doctor, and guidance are updated together.
+ECC 2.0 boundary note: this repo installs selected `skills/` directories and selected `agents/*.md`
+files from ECC `v2.0.0`. It intentionally does not adopt ECC v2 hooks, control-pane, plugin
+scaffolds, commands, or full harness profiles by default; context-mode and oh-my-openagent keep
+owning those boundaries here.
 
 Security note: do not commit provider credentials into `~/.config/opencode/opencode.json` or this repo. Prefer OAuth/subscriber auth flows and secret-manager-backed setup for anything credentialed.
 
@@ -76,7 +77,7 @@ The doctor preserves this repo's integration boundaries:
 - Node must be Homebrew-pinned Node 24 LTS.
 - `context-mode` must be registered through the OpenCode `plugin` array only.
 - `oh-my-openagent` must be registered for OpenCode, with its TUI plugin enabled.
-- ECC should stay on the curated stable line and register installed `SKILL.md` files.
+- ECC should stay on curated stable `v2.0.0` skills and agents and register installed `SKILL.md` files.
 
 Clone this repo:
 ```bash
@@ -291,7 +292,7 @@ Selected skills from [everything-claude-code](https://github.com/affaan-m/everyt
 
 **With specific version:**
 ```bash
-./install-ecc-skills.sh v1.10.0
+./install-ecc-skills.sh v2.0.0
 ```
 
 **Integration (automatic):**
@@ -365,6 +366,10 @@ Upgrade automatically:
 ```bash
 ./scripts/upgrade-ecc.sh --auto
 ```
+
+The upgrade command may install the supported `v1.10.0` to `v2.0.0` curated-skill migration.
+Future major-version jumps remain blocked until this repo's installer, doctor, and guidance are
+updated together.
 
 ### Finding and Installing Additional ECC Skills
 

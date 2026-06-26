@@ -56,7 +56,7 @@ billing. Keep model routing OpenAI-only by default:
 ```
 
 The doctor preserves the current boundaries: Node 24 LTS, context-mode plugin-only,
-oh-my-openagent plugin/TUI registration, and stable curated ECC skills.
+oh-my-openagent plugin/TUI registration, and curated ECC `v2.0.0` skills and agents.
 
 **OpenCode ecosystem boundaries.** Keep these roles distinct when editing guidance:
 
@@ -65,8 +65,8 @@ oh-my-openagent plugin/TUI registration, and stable curated ECC skills.
 - **MCP servers** add external tools through `mcp` entries. OpenCode supports local command
   servers, remote URL servers, OAuth flows, and header-based auth for MCP servers.
 - **Skills** are instruction files today, with this repo still installing Superpowers and curated
-  ECC skill references. Native OpenCode skills directories are a future consideration, not a
-  replacement requirement for the current installer.
+  ECC `v2.0.0` skill references. ECC v2 hooks, control-pane, plugin scaffolds, commands, and full
+  harness profiles remain out of scope for the default installer.
 - **Auth files** are local state. Do not sync, read into docs, or commit OpenCode, OMO, provider,
   or MCP auth files. Document login commands and hygiene rules instead.
 - **Runtime** stays Node LTS first. Bun may appear under OpenCode's internal plugin cache, but repo

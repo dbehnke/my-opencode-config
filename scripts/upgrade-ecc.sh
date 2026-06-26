@@ -110,6 +110,10 @@ is_major_upgrade() {
     [ "$installed_major" -lt "$latest_major" ]
 }
 
+is_supported_major_upgrade() {
+    [ "$1" = "v1.10.0" ] && [ "$2" = "v2.0.0" ]
+}
+
 # Check for updates
 check_updates() {
     log_info "Checking for ECC updates..."
@@ -254,9 +258,9 @@ main() {
         local latest
         latest=$(get_latest_version)
 
-        if is_major_upgrade "$installed" "$latest"; then
+        if is_major_upgrade "$installed" "$latest" && ! is_supported_major_upgrade "$installed" "$latest"; then
             log_warn "Major ECC upgrade detected: $installed -> $latest"
-            log_warn "This requires a future migration plan and will not be auto-installed."
+            log_warn "This requires a migration plan and will not be auto-installed."
             show_changelog "$latest"
             return 2
         fi
