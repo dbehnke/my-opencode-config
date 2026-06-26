@@ -18,6 +18,8 @@ A practical guide for getting started with your OpenCode configuration.
 ## Before You Start: Dev Environment Setup
 
 This configuration is Node LTS-first. Install Bun only for projects that explicitly require Bun.
+OpenCode may use Bun inside its plugin cache, but normal setup should use Node LTS, `npm`, and
+`npx` unless a tool says otherwise.
 
 pr-gate runs linters before every push. Choose the setup that fits your workflow:
 
@@ -121,6 +123,11 @@ opencode auth login
 opencode models --refresh
 oh-my-openagent doctor --verbose
 ```
+
+Use the OpenAI browser/OAuth subscriber flow for this profile. Don't switch the default setup to
+API-key billing unless you intentionally want direct API-key billing.
+
+Keep auth files local. Don't sync, paste, or commit OpenCode, OMO, provider, or MCP auth state.
 
 Check the installed profile:
 
@@ -562,8 +569,12 @@ to add password reset."
    ```bash
    cat ~/.config/opencode/opencode.json | grep -A5 context-mode
    ```
-3. Ensure "enabled": true in the MCP config
+3. Ensure `context-mode` is in the top-level `plugin` array. Don't also configure it as
+   `mcp.context-mode`.
 4. Restart OpenCode
+
+**Note:** MCP is still the right place for external tool servers such as Playwright. OpenCode MCP
+config can describe local command servers, remote URL servers, OAuth flows, and header-based auth.
 
 ---
 

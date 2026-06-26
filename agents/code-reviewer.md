@@ -1,6 +1,7 @@
 ---
 description: Context-aware pre-PR code reviewer. Reads full file contents and cross-references related files before reviewing the diff. Supports JS, TS, Go, Python, Rust, Shell. Returns structured JSON. Invoke before pushing or opening a PR.
 mode: subagent
+model: openai/gpt-5.5
 temperature: 0.1
 permission:
   edit: deny

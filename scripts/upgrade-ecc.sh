@@ -87,6 +87,29 @@ compare_versions() {
     fi
 }
 
+version_major() {
+    local version="${1#v}"
+    echo "${version%%.*}"
+}
+
+is_major_upgrade() {
+    local installed_major
+    local latest_major
+
+    installed_major=$(version_major "$1")
+    latest_major=$(version_major "$2")
+
+    case "$installed_major" in
+        (''|*[!0-9]*) return 1 ;;
+    esac
+
+    case "$latest_major" in
+        (''|*[!0-9]*) return 1 ;;
+    esac
+
+    [ "$installed_major" -lt "$latest_major" ]
+}
+
 # Check for updates
 check_updates() {
     log_info "Checking for ECC updates..."
@@ -113,8 +136,12 @@ check_updates() {
         return 1
     fi
     
-    compare_versions "$installed" "$latest"
-    local result=$?
+    local result
+    if compare_versions "$installed" "$latest"; then
+        result=0
+    else
+        result=$?
+    fi
     
     if [ $result -eq 0 ]; then
         log_success "You are running the latest version!"
@@ -182,6 +209,7 @@ prompt_upgrade() {
 main() {
     local check_only=false
     local auto_upgrade=false
+    local installed
     
     # Parse arguments
     for arg in "$@"; do
@@ -210,12 +238,28 @@ main() {
     echo "========================================="
     echo ""
     
-    check_updates
-    local result=$?
-    
-    if [ $result -eq 2 ] && [ "$check_only" = false ]; then
+    installed=$(get_installed_version)
+    local result
+    if check_updates; then
+        result=0
+    else
+        result=$?
+    fi
+
+    if [ "$check_only" = true ]; then
+        return 0
+    fi
+
+    if [ $result -eq 2 ]; then
         local latest
         latest=$(get_latest_version)
+
+        if is_major_upgrade "$installed" "$latest"; then
+            log_warn "Major ECC upgrade detected: $installed -> $latest"
+            log_warn "This requires a future migration plan and will not be auto-installed."
+            show_changelog "$latest"
+            return 2
+        fi
         
         if [ "$auto_upgrade" = true ]; then
             do_upgrade "$latest"

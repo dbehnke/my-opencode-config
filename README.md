@@ -31,7 +31,7 @@ Steps:
 Constraints:
 - Use the OpenAI/ChatGPT subscriber OAuth flow, not `OPENAI_API_KEY`, unless explicitly asked.
 - Keep context-mode for context/tool-output discipline, oh-my-openagent for model routing and agent orchestration, and ECC for curated domain skills.
-- Stay on stable ECC v1.10.0; do not install ECC 2.0 release candidates by default.
+- Stay on stable ECC v1.10.0 by default. ECC v2.0.0 is stable upstream, but defer migration until Option 2 passes tests.
 - Do not commit local screenshots, caches, secrets, or generated backup files.
 ```
 
@@ -47,15 +47,19 @@ If you prefer to run commands yourself, install the stack in this order:
 
 ## Upstream Audit Status
 
-Audited May 31, 2026 against the current upstream package/release state:
+Audited June 26, 2026 against the current upstream package/release state:
 
 | Component | Current observed upstream | Repo posture |
 |-----------|---------------------------|--------------|
-| OpenCode | `opencode-ai` npm `1.15.13` | Install/verify only; do not vendor |
-| context-mode | npm/release `1.0.157` | Use OpenCode `plugin` registration only |
-| oh-my-openagent | npm/release `4.5.12` | OpenAI subscriber profile included |
-| Superpowers | release `v5.1.0` | Install from upstream instructions |
-| ECC | latest stable tag `v1.10.0` | Default installer updated to `v1.10.0`; avoid `v2.0.0-rc.1` until stable |
+| OpenCode | `opencode-ai` npm `1.17.11` | Install/verify only; do not vendor |
+| context-mode | npm/release `1.0.168` | Use OpenCode `plugin` registration only |
+| oh-my-openagent | npm/release `4.13.0` | OpenAI subscriber profile included |
+| Superpowers | release `v6.0.3` | Install from upstream instructions |
+| ECC | latest stable tag `v2.0.0` | Keep default installer on `v1.10.0`; research the ECC 2.0 migration later |
+
+ECC 2.0 migration note: `v2.0.0` is now stable and desirable to evaluate, but this repo is
+deferring migration. Do not install or migrate to ECC 2.0 until Option 2 passes tests and the
+installer, doctor, and guidance are updated together.
 
 Security note: do not commit provider credentials into `~/.config/opencode/opencode.json` or this repo. Prefer OAuth/subscriber auth flows and secret-manager-backed setup for anything credentialed.
 

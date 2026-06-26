@@ -58,6 +58,20 @@ billing. Keep model routing OpenAI-only by default:
 The doctor preserves the current boundaries: Node 24 LTS, context-mode plugin-only,
 oh-my-openagent plugin/TUI registration, and stable curated ECC skills.
 
+**OpenCode ecosystem boundaries.** Keep these roles distinct when editing guidance:
+
+- **Plugins** load OpenCode-native extensions through the top-level `plugin` array.
+  Context-mode and oh-my-openagent remain first-class plugin entries.
+- **MCP servers** add external tools through `mcp` entries. OpenCode supports local command
+  servers, remote URL servers, OAuth flows, and header-based auth for MCP servers.
+- **Skills** are instruction files today, with this repo still installing Superpowers and curated
+  ECC skill references. Native OpenCode skills directories are a future consideration, not a
+  replacement requirement for the current installer.
+- **Auth files** are local state. Do not sync, read into docs, or commit OpenCode, OMO, provider,
+  or MCP auth files. Document login commands and hygiene rules instead.
+- **Runtime** stays Node LTS first. Bun may appear under OpenCode's internal plugin cache, but repo
+  setup, docs, and MCP tooling should not make Bun the primary runtime.
+
 ---
 
 ## Section 1: Context-Mode Routing Rules
@@ -130,12 +144,16 @@ ctx_execute(language: "shell", code: "shellcheck install-agents.sh")
 
 ### Plugin and MCP Tools
 
-The following MCP servers provide additional capabilities:
+OpenCode plugins and MCP servers serve different roles. Plugins run OpenCode-native extensions from
+the `plugin` array. MCP servers expose external tools through `mcp` config and can be local command
+servers or remote servers using OAuth or header-based auth.
+
+The following plugin and MCP tools provide additional capabilities:
 
 | Server | Tools | Purpose |
 |--------|-------|---------|
-| `context-mode` | `ctx_batch_execute`, `ctx_execute`, `ctx_fetch_and_index`, `ctx_search` | Context protection and session continuity |
-| `playwright` | `playwright_navigate`, `playwright_screenshot`, `playwright_click`, `playwright_fill`, `playwright_evaluate` | Browser automation, screenshot capture |
+| `context-mode` plugin | `ctx_batch_execute`, `ctx_execute`, `ctx_fetch_and_index`, `ctx_search` | Context protection and session continuity |
+| `playwright` MCP server | `playwright_navigate`, `playwright_screenshot`, `playwright_click`, `playwright_fill`, `playwright_evaluate` | Browser automation, screenshot capture |
 
 **Note:** Use `ctx_fetch_and_index` for documentation lookup; use Playwright MCP for live page interaction and screenshots.
 

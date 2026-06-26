@@ -88,7 +88,7 @@ else
   warn "OpenAI subscriber profile missing: $OMO_PROFILE"
 fi
 
-if [ -f "$TUI_JSON" ] && json_query "$TUI_JSON" '.plugin | index("oh-my-openagent/tui")'; then
+if [ -f "$TUI_JSON" ] && jq -e '((.plugin // []) | type == "array" and any(.[]?; type == "string" and (. == "oh-my-openagent" or . == "oh-my-opencode" or test("^oh-my-(openagent|opencode)/.+$"))))' "$TUI_JSON" >/dev/null 2>&1; then
   pass "OMO TUI plugin is registered"
 else
   warn "OMO TUI plugin is not registered in $TUI_JSON"
