@@ -62,6 +62,12 @@ files from ECC `v2.0.0`. It intentionally does not adopt ECC v2 hooks, control-p
 scaffolds, commands, or full harness profiles by default; context-mode and oh-my-openagent keep
 owning those boundaries here.
 
+Optional ECC extras are tracked in `ecc-config/extras-list.txt` as documentation-only candidates.
+The current candidates are `hooks-minimal`, `mcp-presets`, and `rules-pack`; they are opt-in
+reference layers and do not change installer behavior or live OpenCode configuration. Full ECC
+control-pane/session layers, full harness profiles, wholesale command bundles, and plugin scaffolds
+remain out of scope for the default setup.
+
 Security note: do not commit provider credentials into `~/.config/opencode/opencode.json` or this repo. Prefer OAuth/subscriber auth flows and secret-manager-backed setup for anything credentialed.
 
 ## Doctor
@@ -374,6 +380,10 @@ updated together.
 ### Finding and Installing Additional ECC Skills
 
 The default installation includes a curated selection of skills. To find and install additional skills from the ECC repository:
+
+Optional ECC v2 extras live in `ecc-config/extras-list.txt`. That file is a planning manifest, not
+an installer input: it documents future opt-in layers for minimal hooks, MCP presets, and narrow
+rules guidance while preserving the default curated skills-and-agents install.
 
 **Step 1: Browse Available Skills**
 Visit the [ECC skills directory](https://github.com/affaan-m/everything-claude-code/tree/main/skills) to see all available skills.

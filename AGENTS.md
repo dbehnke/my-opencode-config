@@ -67,6 +67,9 @@ oh-my-openagent plugin/TUI registration, and curated ECC `v2.0.0` skills and age
 - **Skills** are instruction files today, with this repo still installing Superpowers and curated
   ECC `v2.0.0` skill references. ECC v2 hooks, control-pane, plugin scaffolds, commands, and full
   harness profiles remain out of scope for the default installer.
+- **Optional ECC extras** live in `ecc-config/extras-list.txt` as documentation-only candidates.
+  `hooks-minimal`, `mcp-presets`, and `rules-pack` may be considered in future scoped work, but do
+  not enable them by default or treat that manifest as an installer input.
 - **Auth files** are local state. Do not sync, read into docs, or commit OpenCode, OMO, provider,
   or MCP auth files. Document login commands and hygiene rules instead.
 - **Runtime** stays Node LTS first. Bun may appear under OpenCode's internal plugin cache, but repo

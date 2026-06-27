@@ -1,0 +1,21 @@
+# Optional ECC v2 extras for my-opencode-config
+#
+# This manifest is documentation only. It is not consumed by the default installer,
+# and it must not enable runtime hooks, MCP servers, rules, commands, or profiles
+# without an explicit follow-up change.
+#
+# Default install remains curated ECC v2.0.0 skills and selected agents only.
+
+# Optional reference layer for a tiny, OpenCode-adapted hook set: session-start,
+# pre-compact, stop-time verification, and safety reminders. Keep context-mode as
+# the owner of context/session hooks unless a future plan proves compatibility.
+hooks-minimal
+
+# Optional reference layer for small MCP presets such as browser, GitHub, or docs
+# tools. MCP servers must stay opt-in because tool-surface bloat hurts routing.
+mcp-presets
+
+# Optional reference layer for always-on guidance that is narrower than full ECC
+# harness profiles: Node LTS, OpenAI subscriber routing, plugin/MCP boundaries,
+# and ECC/Superpowers conflict rules.
+rules-pack
